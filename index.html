@@ -1,852 +1,965 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صفة حج النبي ﷺ - حديث جابر</title>
-    <!-- Tailwind CSS -->
+    <title>PELITA - Ponpes Nurul Ilmi</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        arabic: ['Amiri', 'serif'],
-                        arabicUI: ['Tajawal', 'sans-serif'],
-                        latin: ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        emerald: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 800: '#065f46', 900: '#064e3b', 950: '#022c22' },
-                        amber: { 50: '#fffbeb', 100: '#fef3c7', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f8fafc; font-family: 'Tajawal', sans-serif; overflow-x: hidden; }
-        .latin-text { font-family: 'Poppins', sans-serif; direction: ltr; text-align: left; }
-        .arabic-text { 
-            font-family: 'Amiri', serif; 
-            line-height: 2.8 !important; /* Jarak spasi diperlebar agar harakat tidak tabrakan */
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
-        /* Smooth transitions */
-        .fade-in { animation: fadeIn 0.4s ease-in-out forwards; }
+        :root {
+            --primary: #1e40af; /* Blue 800 */
+            --primary-light: #3b82f6; /* Blue 500 */
+            --accent: #f59e0b; /* Amber 500 */
+            --bg-soft: #eff6ff; /* Blue 50 */
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-soft);
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .gradient-bg {
+            background: radial-gradient(circle at top right, #dbeafe, transparent 40%),
+                        radial-gradient(circle at bottom left, #fffbeb, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(30, 64, 175, 0.4);
+        }
+
+        .card-entry {
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .card-entry:hover {
+            border-color: #bfdbfe;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border-radius: 1rem;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            outline: none;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Animation */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
-
-        /* Loading Dots Animation */
-        .typing-indicator span {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background-color: #059669;
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
     </style>
 </head>
-<body class="text-slate-800 antialiased selection:bg-emerald-200 selection:text-emerald-900">
+<body class="min-h-screen gradient-bg">
 
-    <!-- ========================================== -->
-    <!-- 1. HALAMAN DEPAN (LANDING PAGE)            -->
-    <!-- ========================================== -->
-    <div id="landingPage" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-700 text-white p-6 transition-opacity duration-500">
-        <!-- Dekorasi Background -->
-        <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMSI+PHBhdGggZD0iTTM2IDM0dj1sMjIgMjJ2LTRsLTIwLTIweiIvPjwvZz48L2c+PC9zdmc+')]"></div>
+    <div id="app" class="max-w-7xl mx-auto px-4 py-6 md:py-10">
         
-        <div class="relative z-10 text-center max-w-2xl mx-auto space-y-6">
-            <span class="inline-block py-1 px-4 rounded-full bg-emerald-800/50 text-emerald-100 text-sm font-semibold border border-emerald-500/30 backdrop-blur-sm latin-text tracking-wider">
-                HADITS JABIR BIN ABDULLAH RA
-            </span>
-            <h1 class="text-5xl md:text-7xl font-extrabold arabicUI leading-tight text-amber-400 drop-shadow-lg">
-                صِفَةُ حَجِّ النَّبِيِّ ﷺ
-            </h1>
-            <p class="text-xl md:text-2xl text-emerald-100 font-light latin-text">
-                Tata Cara Haji Nabi ﷺ Secara Lengkap
-            </p>
-            <div class="latin-text text-sm md:text-base text-emerald-200/80 font-light mt-4 max-w-lg mx-auto leading-relaxed">
-                "Berdasarkan riwayat Muslim, mencakup hukum-hukum haji yang paling agung. Dilengkapi مع مساعد الذكاء الاصطناعي ✨ dan terjemahan Bahasa Indonesia."
-            </div>
-            
-            <button onclick="startApp()" class="mt-12 latin-text group relative inline-flex items-center justify-center px-8 py-4 font-bold text-emerald-900 bg-amber-400 rounded-full overflow-hidden shadow-lg shadow-amber-500/30 hover:scale-105 transition-all duration-300">
-                <span class="relative z-10 flex items-center gap-2">
-                    Mulai Membaca <span class="text-xl group-hover:translate-x-1 transition-transform">→</span>
-                </span>
-            </button>
+        <!-- Notification -->
+        <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] opacity-0 pointer-events-none transition-all duration-500 scale-95">
+            <div id="notif-content" class="px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 font-semibold text-white"></div>
         </div>
-    </div>
 
-
-    <!-- ========================================== -->
-    <!-- 2. APLIKASI UTAMA (Materi & Sidebar)       -->
-    <!-- ========================================== -->
-    <div id="mainApp" class="hidden min-h-[100dvh] flex bg-slate-50 relative">
-        
-        <!-- Overlay untuk Sidebar di Mobile -->
-        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden transition-opacity lg:hidden"></div>
-
-        <!-- Sidebar (Bilah Navigasi) -->
-        <aside id="sidebar" class="fixed top-0 bottom-0 right-0 w-72 bg-white shadow-2xl z-50 transform translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col latin-text border-l border-slate-100">
-            <div class="p-6 bg-emerald-900 text-white flex justify-between items-center">
-                <div>
-                    <h2 class="font-bold text-lg">Daftar Materi</h2>
-                    <p class="text-xs text-emerald-200">Sifat Haji Nabi ﷺ</p>
+        <!-- Custom Modal for Jam Kembali (Kategori A) -->
+        <div id="modal-jam" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="glass w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border border-white transform transition-all">
+                <h3 class="text-lg font-bold text-blue-950 mb-2">Selesaikan Izin Keluar</h3>
+                <p class="text-xs text-slate-500 mb-4">Silakan isi waktu ketibaan Anda kembali di lingkungan sekolah.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Jam Kembali</label>
+                        <input type="time" id="input-jam-kembali" class="form-input mt-1">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="closeModalJam()" class="flex-1 py-3 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
+                        <button onclick="saveJamKembali()" class="flex-1 py-3 rounded-xl text-xs font-bold text-white btn-primary">Simpan</button>
+                    </div>
                 </div>
-                <button onclick="toggleSidebar()" class="lg:hidden text-white hover:text-amber-400 p-2 text-2xl">&times;</button>
             </div>
-            
-            <div class="flex-1 overflow-y-auto py-4" id="navLinks">
-                <!-- Links akan digenerate oleh JavaScript -->
+        </div>
+
+        <!-- Custom Modal for Alasan Kepsek -->
+        <div id="modal-alasan" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="glass w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border border-white transform transition-all">
+                <h3 class="text-lg font-bold text-blue-950 mb-2" id="modal-alasan-title">Konfirmasi Persetujuan</h3>
+                <p class="text-xs text-slate-500 mb-4">Tambahkan catatan atau alasan (opsional) untuk keputusan ini.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Catatan / Alasan</label>
+                        <textarea id="input-alasan-kepsek" rows="3" class="form-input mt-1" placeholder="Masukkan alasan di sini..."></textarea>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="closeModalAlasan()" class="flex-1 py-3 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
+                        <button onclick="submitAlasan()" id="btn-submit-alasan" class="flex-1 py-3 rounded-xl text-xs font-bold text-white btn-primary">Konfirmasi</button>
+                    </div>
+                </div>
             </div>
-        </aside>
+        </div>
 
-        <!-- Area Konten Utama -->
-        <main class="flex-1 lg:mr-72 flex flex-col min-h-[100dvh] relative w-full">
-            
-            <!-- Header Mobile -->
-            <header class="lg:hidden sticky top-0 z-30 bg-emerald-900 text-white p-4 shadow-md flex justify-between items-center">
-                <button onclick="toggleSidebar()" class="p-2 -mr-2 flex flex-col gap-1.5 focus:outline-none">
-                    <span class="w-6 h-0.5 bg-white rounded"></span>
-                    <span class="w-6 h-0.5 bg-white rounded"></span>
-                    <span class="w-6 h-0.5 bg-white rounded"></span>
-                </button>
-                <div class="font-bold arabicUI text-xl text-amber-400">حج النبي ﷺ</div>
-                <div class="w-8"></div> <!-- Spacer -->
-            </header>
-
-            <!-- Wadah Halaman Konten -->
-            <div id="contentContainer" class="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full pb-48">
-                <!-- Halaman 0 -->
-                <div class="page-content hidden" id="page-0">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Mukadimah & Keberangkatan</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">📜</span>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                وَحَدِيثُ جَابِرٍ٣ فِي حَجِّ اَلنَّبِيِّ -صلى الله عليه وسلم- يشتمل على أعظم أَحْكَامِ اَلْحَجِّ، وَهُوَ مَا رَوَاهُ مُسْلِمٌ١ عَنْ جَابِرِ بْنِ عَبْدِ اَللَّهِ رَضِيَ اَللَّهُ عَنْهُمَا،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] leading-relaxed">
-                                <strong>Terjemahan:</strong> Dan hadits Jabir³ mengenai haji Nabi ﷺ mencakup hukum-hukum haji yang paling agung, yaitu apa yang diriwayatkan oleh Muslim¹ dari Jabir bin Abdullah radhiyallahu 'anhuma.
-                            </div>
+        <!-- LOGIN VIEW -->
+        <div id="view-login" class="flex flex-col items-center justify-center min-h-[85vh] animate-fade-in">
+            <div class="w-full max-w-[400px]">
+                <div class="text-center mb-10">
+                    <div class="relative w-28 h-28 mx-auto mb-6">
+                        <div class="absolute inset-0 bg-blue-100 rounded-full animate-pulse opacity-50"></div>
+                        <div class="relative bg-white w-full h-full rounded-full shadow-2xl flex items-center justify-center border-4 border-white overflow-hidden">
+                            <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md" fill="none">
+                                <defs>
+                                    <linearGradient id="bookGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#1e40af" />
+                                        <stop offset="100%" stop-color="#3b82f6" />
+                                    </linearGradient>
+                                    <linearGradient id="lightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#fef08a" />
+                                        <stop offset="50%" stop-color="#fbbf24" />
+                                        <stop offset="100%" stop-color="#d97706" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M50 8 C 50 30 40 38 18 38 C 40 38 50 46 50 68 C 50 46 60 38 82 38 C 60 38 50 30 50 8 Z" fill="url(#lightGrad)" />
+                                <circle cx="50" cy="38" r="2.5" fill="#ffffff" />
+                                <path d="M15 62 Q 32.5 48 50 68 Q 67.5 48 85 62 V 82 Q 67.5 68 50 88 Q 32.5 68 15 82 Z" fill="url(#bookGrad)"/>
+                                <path d="M50 68 V 88" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+                            </svg>
                         </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ١- أَنَّ اَلنَّبِيَّ -صلى الله عليه وسلم- مَكَثَ فِي اَلْمَدِينَةِ تِسْعَ سِنِينَ لَمْ يَحُجَّ، ثُمَّ أَذَّنَ فِي اَلنَّاسِ فِي اَلْعَاشِرَةِ، أَنَّ رَسُولَ اَللَّهِ حَاجٌّ، فَقَدِمَ اَلْمَدِينَةَ بَشَرٌ كَثِيرٌ (كُلُّهُمْ يلتمس أن يأتم الناس بِرَسُولِ اَللَّهِ -صلى الله عليه وسلم- وَيَعْمَلُ مثله) ٢.
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] leading-relaxed">
-                                <strong>1.</strong> Bahwa Nabi ﷺ tinggal di Madinah selama sembilan tahun belum menunaikan haji. Kemudian pada tahun kesepuluh diumumkan kepada manusia bahwa Rasulullah akan berhaji. Maka datanglah manusia yang sangat banyak ke Madinah, (semuanya berharap untuk bisa bermakmum/mengikuti Rasulullah ﷺ dan beramal seperti beliau)².
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٢- فَخَرَجْنَا مَعَهُ حَتَّى إِذَا أَتَيْنَا: ذَا الْحُلَيْفَةِ، فَوَلَدَتْ أَSماءُ بِنْتُ عُمَيْسٍ مُحَمَّدَ بْنَ أَبِي بَكْرٍ، فَأَرْسَلَتْ إِلَى رَسُولِ اَللَّهِ صلى الله عليه وسلم: كَيْفَ أَصْنَعُ؟ قَالَ: "اِغْتَسِلِي، وَاسْتَثْفِرِي٣ بثوب، وأحرمي".
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] leading-relaxed">
-                                <strong>2.</strong> Maka kami keluar bersama beliau hingga sampai di Dzul Hulaifah. Asma' binti Umais saat itu melahirkan Muhammad bin Abu Bakar, lalu ia mengutus seseorang bertanya kepada Rasulullah ﷺ: "Apa yang harus aku lakukan?" Beliau bersabda: "Mandilah, balutlah tempat keluarnya darah dengan kain, dan berihramlah."
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Halaman 1 -->
-                <div class="page-content hidden" id="page-1">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Ihram & Talbiyah</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">🐪</span>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٣- (فصلى رسول الله -صلى الله عليه وسلم- فِي اَلْمَسْجِدِ) ١، ثُمَّ رَكِبَ اَلْقَصْوَاءَ٢ حَتَّى إِذَا اِسْتَوَتْ بِهِ نَاقَتُهُ عَلَى اَلْبَيْدَاءِ٣ أهَلَّ بِالتَّوْحِيدِ: "لَبَّيْكَ٤ اَللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ اَلْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ، لَا شَرِيكَ لَكَ".
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] leading-relaxed">
-                                <strong>3.</strong> (Maka Rasulullah ﷺ shalat di masjid)¹, kemudian beliau menunggang untanya Al-Qaswa² hingga ketika unta tersebut berdiri tegak membawanya di atas Al-Baida'³, beliau berihram dengan membaca kalimat tauhid: "Labbaikallahumma labbaik, labbaika laa syarika laka labbaik. Innal hamda wanni'mata laka wal mulk, laa syarika lak" (Aku penuhi panggilan-Mu ya Allah, aku penuhi panggilan-Mu. Aku penuhi panggilan-Mu, tiada sekutu bagi-Mu, aku penuhi panggilan-Mu. Sesungguhnya pujian, nikmat, و kerajaan hanyalah milik-Mu, tiada sekutu bagi-Mu).
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٤- وأهلَّ٥ اَلنَّاسُ بِهَذَا اَلَّذِي يُهِلُّونَ بِهِ، فَلَمْ يَرُدَّ رَسُولُ اَللَّهِ -صلى الله عليه وسلم- عَلَيْهِمْ شَيْئًا مِنْهُ،<br>
-                                ٥- وَلَزِمَ رَسُولُ اَللَّهِ -صلى الله عليه وسلم- تَلْبِيَتَهُ.<br>
-                                ٦- قَالَ جَابِرٌ: لَسْنَا نَنْوِي إِلَّا اَلْحَجَّ، لَسْنَا نَعْرِفُ اَلْعُمْرَةَ.
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>4.</strong> Dan orang-orang ber-talbiyah dengan talbiyah yang biasa mereka ucapkan, dan Rasulullah ﷺ tidak menolak sedikit pun dari bacaan mereka.</p>
-                                <p><strong>5.</strong> Dan Rasulullah ﷺ tetap melantunkan talbiyah beliau sendiri.</p>
-                                <p><strong>6.</strong> Jabir berkata: "Kami tidak berniat selain hanya untuk haji, kami saat itu tidak mengenal umrah (pada bulan-bulan haji)."</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Halaman 2 -->
-                <div class="page-content hidden" id="page-2">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Tawaf Baitullah & Sa'i</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">🕋</span>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٧- حَتَّى إِذَا أَتَيْنَا اَلْبَيْتَ مَعَهُ اِسْتَلَمَ الركن،<br>
-                                ٨- فطاف سبعًا٦،<br>
-                                ٩- فرمل ثلاثًا١، ومشى أربعًا،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>7.</strong> Hingga ketika kami tiba di Baitullah bersama beliau, beliau mengusap Rukun (Hajar Aswad).</p>
-                                <p><strong>8.</strong> Lalu beliau tawaf sebanyak tujuh putaran.</p>
-                                <p><strong>9.</strong> Beliau berlari-lari kecil pada tiga putaran pertama, dan berjalan biasa pada empat putaran berikutnya.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ١٠- ثُمَّ نَفَذَ٢ إِلَى مَقَامِ إِبْرَاهِيمَ فَقَرَأَ: {وَاتَّخِذُوا مِنْ مَقَامِ إِبْرَاهِيمَ مُصَلّى} [اَلْبَقَرَةِ: ١٢٥] .<br>
-                                ١١- فَصَلَّى رَكْعَتَيْنِ، فَجَعَلَ اَلْمَقَامَ بَيْنَهُ وَبَيْنَ اَلْبَيْتِ.<br>
-                                ١٢- وَفِي رِوَايَةٍ: أَنَّهُ قَرَأَ فِي اَلرَّكْعَتَيْنِ: {قُلْ هُوَ اللَّهُ أَحَدٌ} {قُلْ يَا أَيُّهَا الْكَافِرُونَ} .<br>
-                                ١٣- ثُمَّ رَجَعَ إِلَى اَلرُّكْنِ وَاسْتَلَمَهُ،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>10.</strong> Kemudian beliau menuju Maqam Ibrahim lalu membaca: "Dan jadikanlah sebagian Maqam Ibrahim tempat shalat" (QS. Al-Baqarah: 125).</p>
-                                <p><strong>11.</strong> Beliau shalat dua rakaat, menjadikan Maqam Ibrahim berada di antara beliau و Ka'bah.</p>
-                                <p><strong>12.</strong> Dalam sebuah riwayat disebutkan: Bahwa pada dua rakaat tersebut beliau membaca Surah Al-Ikhlas (Qul huwallahu ahad) dan Surah Al-Kafirun (Qul yaa ayyuhal kaafirun).</p>
-                                <p><strong>13.</strong> Kemudian beliau kembali ke Rukun (Hajar Aswad) lalu mengusapnya kembali.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ١٤- ثُمَّ خَرَجَ مِنْ اَلْبَابِ إِلَى اَلصَّفَا،<br>
-                                ١٥- فَلَمَّا دَنَا مِنْ اَلصَّفَا قَرَأَ: {إِنَّ الصَّفَا وَالْمَرْوَةَ مِنْ شَعَائِرِ اللَّهِ} [اَلْبَقَرَةِ: ١٥٨] .<br>
-                                ١٦- فَرَقَى عَلَيْهِ حَتَّى رَأَى اَلْبَيْتَ،<br>
-                                ١٧- فَاسْتَقْبَلَ اَلْقِبْلَةَ،<br>
-                                ١٨- فَوَحَّدَ الله وكبره، قال: "لَا إِلَهَ إِلَّا اَللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ اَلْمُلْكُ وَلَهُ اَلْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، لَا إِلَهَ إِلَّا اَللَّهُ وَحْدَهُ، أَنْجَزَ وَعْدَهُ، وَنَصَرَ عَبْدَهُ، وَهَزَمَ اَلْأَحْزَابَ وَحْدَهُ". ثُمَّ دَعَا بَيْنَ ذَلِكَ، قَالَ مِثْلَ هذا ثلاث مرات.
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>14.</strong> Kemudian beliau keluar melalui pintu menuju bukit Safa.</p>
-                                <p><strong>15.</strong> Tatkala mendekati Safa, beliau membaca: "Sesungguhnya Safa dan Marwah adalah sebahagian dari syiar Allah" (QS. Al-Baqarah: 158).</p>
-                                <p><strong>16.</strong> Beliau menaiki bukit Safa hingga dapat melihat Ka'bah.</p>
-                                <p><strong>17.</strong> Lalu beliau menghadap ke arah Kiblat.</p>
-                                <p><strong>18.</strong> Beliau mentauhidkan Allah dan mengagungkan-Nya (bertakbir), lalu mengucapkan: "Laa ilaha illallahu wahdahu laa syarika lahu, lahul mulku wa lahul hamdu, wa huwa 'alaa kulli syai-in qadiir. Laa ilaha illallahu wahdahu, anjaza wa'dahu, wa nasara 'abdahu, wa hazamal ahzaaba wahdahu". Beliau lalu berdoa di sela-sela itu, dan mengucapkan kalimat tersebut sebanyak ثلاث مرات.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ١٩- ثم نزل ومشي إلى المروة،<br>
-                                ٢٠- sampai إذا انصبت قدماه في بطن الوادي سعى،<br>
-                                ٢١- حتى إذا صعدتا مشى،<br>
-                                ٢٢- حَتَّى أَتَى اَلْمَرْوَةَ١، فَفَعَلَ عَلَى اَلْمَرْوَةِ كَمَا فَعَلَ عَلَى اَلصَّفَا،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>19.</strong> Kemudian beliau turun dan berjalan menuju bukit Marwah.</p>
-                                <p><strong>20.</strong> Hingga tatkala kedua kakinya menurun di perut lembah, beliau mempercepat langkahnya (sa'i / berlari kecil).</p>
-                                <p><strong>21.</strong> Hingga tatkala (kontur tanahnya) mulai menanjak, beliau kembali berjalan biasa.</p>
-                                <p><strong>22.</strong> Hingga beliau tiba di Marwah, lalu beliau melakukan di atas bukit Marwah persis seperti apa yang beliau lakukan di atas bukit Safa.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Halaman 3 -->
-                <div class="page-content hidden" id="page-3">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Perintah Umrah & Kedatangan Ali</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">👥</span>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٢٣- حَتَّى إِذَا كَانَ آخِرُ طَوَافِهِ عَلَى اَلْمَرْوَةِ، فَقَالَ: "لَوْ أَنِّي اِسْتَقْبَلْتُ مِنْ أَمْرِي مَا اِسْتَدْبَرْتُ لَمْ أَسُقْ اَلْهَدْيَ، وَجَعَلْتُهَا عُمْرَةً، فَمَنْ كَانَ مِنْكُمْ لَيْسَ مَعَهُ هدي فليحل وليjعلها عمرة".<br>
-                                ٢٤- فَقَامَ سُرَاقَةُ بْنُ مَالِكِ بْنِ جُعْشُمٍ، فَقَالَ: يَا رَسُولَ اَللَّهِ، أَلِعَامِنَا هَذَا، أَمْ لِأَبَدٍ؟ فَشَبَّكَ رَسُولُ اَللَّهِ -صلى الله عليه وسلم- أَصَابِعَهُ وَاحِدَةً فِي اَلْأُخْرَى، وَقَالَ: "دَخَلَتْ اَلْعُمْرَةُ فِي اَلْحَجِّ -مَرَّتَيْنِ- لَا، بَلْ لِأَبَدِ أَبَدٍ".
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>23.</strong> Hingga ketika berada di putaran terakhirnya di Marwah, beliau bersabda: "Seandainya aku bisa mengulang urusanku yang telah berlalu, niscaya aku tidak akan membawa hewan kurban (hadyu) و akan kujadikan ibadah ini sebagai umrah. Oleh karena itu, barangsiapa di antara kalian yang tidak membawa hadyu, hendaklah ia bertahalul dan menjadikannya umrah."</p>
-                                <p><strong>24.</strong> Maka Suraqah bin Malik bin Ju'syum berdiri dan bertanya: "Wahai Rasulullah, apakah (ketentuan ini) khusus untuk tahun kita ini saja, أوkah untuk selamanya?" Rasulullah ﷺ menjalin jari-jemari beliau satu sama lain sambil bersabda: "Umrah telah masuk ke dalam haji (beliau mengucapkannya dua kali). Tidak, bahkan (hukum ini berlaku) untuk selama-lamanya."</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٢٥- وَقَدِمَ عَلِيٌّ مِنْ اَلْيَمَنِ بِبُدْنِ اَلنَّبِيِّ٢ صلى الله عليه وسلم (فَوَجَدَ فَاطِمَةَ مِمَّنْ حَلَّ، وليست ثيابًا٣ صبيغًا واكتحلت،فأنكر ذلك عليها، فقالت: إن أبي أمرني بهذا، قال: فكان علي يقول بالعراق: فذهبت إِلَى رَسُولِ اَللَّهِ -صلى الله عليه وسلم- محرشًا على فاطمة للذي صنعت، مستفتيًا لرسول الله -صلى الله عليه وسلم- فيما ذكرت عنه، فأخبرته أني أنكرت عليها، فقال: "صَدَقَتْ، صَدَقَتْ) ١، مَاذَا قُلْتَ حِينَ فَرَضْتَ اَلْحَجَّ؟ " قَالَ: قُلْتُ: اَللَّهُمَّ إِنِّي أهلُّ بِمَا أَهَلَّ بِهِ رَسُولُكَ. قَالَ: فَإِنَّ مَعِيَ اَلْهَدْيَ فَلَا تَحِلُّ.
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] leading-relaxed">
-                                <strong>25.</strong> Dan Ali datang dari Yaman membawa unta-unta kurban Nabi ﷺ (Lalu ia mendapati Fatimah termasuk orang yang telah bertahalul, ia mengenakan pakaian yang diwarnai dan memakai celak. Ali mengingkari perbuatannya itu. Fatimah berkata: "Sesungguhnya ayahku yang memerintahkan ini." Ali berkata saat di Irak: "Maka aku pergi menemui Rasulullah ﷺ untuk mengadukan Fatimah atas apa yang dilakukannya, seraya meminta fatwa membenarkan ucapan Fatimah tersebut. Aku sampaikan kepada beliau bahwa aku mengingkari perbuatan Fatimah." Nabi menjawab: "Dia benar, dia benar"). Nabi bertanya: "Apa niat yang engkau ucapkan ketika hendak berhaji?" Ali menjawab: "Aku mengucapkan: Ya Allah, aku berniat ihram dengan niat yang sama dengan Rasul-Mu." Nabi bersabda: "Sesungguhnya aku membawa hadyu, maka janganlah engkau bertahalul."
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٢٦- قَالَ: فَكَانَ جَمَاعَةُ اَلْهَدْيِ اَلَّذِي قَدِمَ بِهِ عَلِيٌّ مِنْ اَلْيَمَنِ، وَاَلَّذِي أَتَى بِهِ اَلنَّبِيُّ -صلى الله عليه وسلم- مِائَةً.<br>
-                                ٢٧- قَالَ: فَحَلَّ اَلنَّاسُ كُلُّهُمْ، وَقَصَّرُوا، إِلَّا اَلنَّبِيَّ -صلى الله عليه وسلم- وَمَنْ كَانَ مَعَهُ هَدْيٌ.
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>26.</strong> Jabir berkata: Maka total jumlah hewan kurban (hadyu) yang dibawa Ali dari Yaman dan yang dibawa oleh Nabi ﷺ adalah 100 ekor.</p>
-                                <p><strong>27.</strong> Jabir berkata: Maka seluruh sahabat bertahalul dan memendekkan rambut mereka, kecuali Nabi ﷺ dan sahabat yang membawa hadyu bersama beliau.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Halaman 4 -->
-                <div class="page-content hidden" id="page-4">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Hari Tarwiyah di Mina</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">⛺</span>
-                    </div>
-                    <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                        <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                            ٢٨- فَلَمَّا كَانَ يَوْمُ اَلتَّرْوِيَةِ٢ تَوَجَّهُوا إِلَى مِنًى،<br>
-                            ٢٩- فَأَهَلُّوا بِالْحَجِّ.<br>
-                            ٣٠- وَرَكِبَ اَلنَّبِيُّ -صلى الله عليه وسلم- فَصَلَّى بِهَا اَلظُّهْرَ وَالْعَصْرَ، وَالْمَغْرِبَ وَالْعِشَاءَ وَالْفَجْرَ،<br>
-                            ٣١- ثُمَّ مَكَثَ قَلِيلًا حَتَّى طَلَعَتْ اَلشَّمْسُ،
-                        </p>
-                        <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                            <p><strong>28.</strong> Tatkala tiba hari Tarwiyah (8 Dzulhijjah), mereka beranjak menuju Mina.</p>
-                            <p><strong>29.</strong> Mereka mulai berihram (kembali) untuk haji.</p>
-                            <p><strong>30.</strong> Nabi ﷺ menunggangi untanya, lalu melaksanakan shalat Dzuhur, Ashar, Maghrib, Isya, dan Subuh di sana (Mina).</p>
-                            <p><strong>31.</strong> Kemudian beliau berdiam sejenak hingga terbit matahari.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Halaman 5 -->
-                <div class="page-content hidden" id="page-5">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Arafah & Khutbah Wada'</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">🤲</span>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٣٢- وَأَمَرَ بِقُبَّةٍ مَنْ شَعَرٍ تُضْرَبُ لَهُ بِنَمِرَةَ١، فَسَارَ رَسُولُ اَللَّهِ -صلى الله عليه وسلم- وَلَا تَشُكَّ قُرَيْشٌ إِلَّا أَنَّهُ وَاقِفٌ عِنْدَ اَلْمَشْعَرِ اَلْحَرَامِ، كَمَا كَانَتْ قُرَيْشٌ تَصْنَعُ فِي اَلْجَاهِلِيَّةِ، فَأَجَازَ٢ رَسُولُ اَللَّهِ -صلى الله عليه وسلم- حَتَّى أَتَى عَرَفَةَ، فَوَجَدَ اَلْقُبَّةَ قَدْ ضُرِبَتْ لَهُ بِنَمِرَةَ، فَنَزَلَ بِهَا،<br>
-                                ٣٣- حَتَّى إِذَا زاغت الشمس أمر بالقصواء فرحلت له،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>32.</strong> Beliau memerintahkan agar dibuatkan tenda dari bulu untuk beliau di Namirah. Rasulullah ﷺ lalu berjalan, dan kaum Quraisy tidak ragu bahwa beliau pasti akan wuquf di Masy'aril Haram (Muzdalifah) sebagaimana kebiasaan Quraisy di masa Jahiliyah. Namun Rasulullah ﷺ terus melewatinya hingga tiba di Arafah. Beliau mendapati tenda telah didirikan untuknya di Namirah, maka beliau singgah di sana.</p>
-                                <p><strong>33.</strong> Hingga ketika matahari telah tergelincir (masuk waktu Dzuhur), beliau memerintahkan agar disiapkan unta Al-Qaswa, lalu dipasanglah pelananya.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-[30px] leading-10 text-slate-800 mb-6" dir="rtl">
-                                ٣٤- فَأَتَى بَطْنَ اَلْوَادِي٣ فَخَطَبَ اَلنَّاسَ: وَقَالَ: "إِنَّ دِمَاءَكُمْ وَأَمْوَالَكُمْ حَرَامٌ عَلَيْكُمْ، كَحُرْمَةِ يَوْمِكُمْ هَذَا، فِي شَهْرِكُمْ هَذَا، فِي بَلَدِكُمْ هَذَا، أَلَا كُلُّ شَيْءٍ مِنْ أَمْرِ اَلْجَاهِلِيَّةِ تَحْتَ قَدَمَيَّ مَوْضُوعٌ، وَدِمَاءُ اَلْجَاهِلِيَّةِ مَوْضُوعَةٌ، وَإِنَّ أَوَّلَ دَمٍ أَضَعُ مِنْ دِمَائِنَا: دَمُ اِبْنِ رَبِيعَةَ بْنِ اَلْحَارِثِ -كَانَ مُSتَرْضِعًا فِي بَنِي سَعْدٍ فَقَتَلَتْهُ هُذَيْلٌ- وَرِبَا اَلْجَاهِلِيَّةِ مَوْضُوعٌ، وَأَوَّلُ رِبًا أَضَعُ مِنْ رِبَانَا رِبَا عَبَّاسِ بْنَ عَبْدِ اَلْمُطَّلِبِ، فَإِنَّهُ مَوْضُوعٌ كُلُّهُ، فَاتَّقُوا اَللَّهَ فِي اَلنِّسَاءِ، فَإِنَّكُمْ أَخَذْتُمُوهُنَّ بِأَمَانَةِ اَللَّهِ، وَاسْتَحْلَلْتُمْ فُرُوجَهُنَّ بِكَلِمَةِ الله، ولكم عليهم ألا يوطئن فرشكم أَحَدًا تَكْرَهُونَهُ، فَإِنْ فَعَلْنَ ذَلِكَ فَاضْرِبُوهُنَّ ضَرْبًا غَيْرَ مُبَرِّحٍ، وَلَهُنَّ عَلَيْكُمْ رِزْقُهُنَّ وَكِسْوَتُهُنَّ بِالْمَعْرُوفِ. وَقَدْ تَرَكْتُ فِيكُمْ مَا لَنْ تَضِلُّوا بَعْدَهُ إِنْ اِعْتَصَمْتُمْ بِهِ، كِتَابُ اَللَّهِ. وَأَنْتُمْ تُSأَلُونَ عَنِّي، فَمَا أَنْتُمْ قَائِلُونَ؟ " قَالُوا: نَشْهَدُ أَنَّكَ قَدْ بَلَّغْتَ، وَأَدَّيْتَ، وَنَصَحْتَ، فَقَالَ بِإِصْبُعِهِ اَلسَّبَّابَةِ يَرْفَعُهَا إِلَى اَلسَّمَاءِ وَيَنْكُبُهَا١ إِلَى اَلنَّاسِ: "اَللَّهُمَّ اشهد، اللهم اشهد"، ثلاث مرات،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>34.</strong> Maka beliau mendatangi perut lembah (Uranah) lalu berkhutbah kepada manusia: "Sesungguhnya darah dan harta kalian haram (suci) bagi kalian, sebagaimana kesucian hari kalian ini, di bulan kalian ini, di negeri kalian ini. Ketahuilah, segala sesuatu dari perkara Jahiliyah kini berada di bawah telapak kakiku (dihapus). Darah (balas dendam) masa Jahiliyah telah dihapuskan. Dan darah pertama dari darah kita yang aku hapuskan adalah darah Ibnu Rabi'ah bin Al-Harits—ia disusukan di Bani Sa'ad lalu dibunuh oleh suku Hudzail—. Riba masa Jahiliyah telah dihapuskan, dan riba pertama dari riba kita yang aku hapuskan adalah riba Abbas bin Abdul Muthalib, sesungguhnya semuanya telah dihapus total. Bertakwalah kepada Allah dalam urusan wanita, karena kalian telah mengambil mereka dengan amanat Allah dan menghalalkan kemaluan mereka dengan kalimat Allah. Hak kalian atas mereka adalah mereka tidak boleh mengizinkan orang yang kalian benci menginjak alas tidur (masuk ke rumah) kalian. Jika mereka melakukannya, pukullah mereka dengan pukulan yang tidak melukai. Dan kewajiban kalian adalah memberi rezeki (nafkah) dan pakaian mereka dengan cara yang ma'ruf. Dan sungguh aku telah meninggalkan di tengah kalian sesuatu yang jika kalian berpegang teguh kepadanya, kalian tidak akan tersesat sesudahnya: Kitabullah (Al-Quran). Dan kalian kelak akan ditanya tentang diriku, maka apa yang akan kalian katakan?" Para sahabat menjawab: "Kami bersaksi bahwa engkau telah menyampaikan (risalah), menunaikan (amanah), dan memberi nasehat." Lalu beliau mengangkat jari telunjuknya ke arah langit lalu menunjukannya ke arah manusia seraya berkata: "Ya Allah persaksikanlah, Ya Allah persaksikanlah" sebanyak tiga kali.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٣٥- ثُمَّ أَذَّنَ بِلَالٌ، ثُمَّ أَقَامَ فَصَلَّى اَلظُّهْرَ، ثُمَّ أَقَامَ فَصَلَّى اَلْعَصْرَ،<br>
-                                ٣٦- وَلَمْ يصلِّ بَيْنَهُمَا شَيْئًا.<br>
-                                ٣٧- ثُمَّ رَكِبَ حَتَّى أَتَى اَلْمَوْقِفَ،<br>
-                                ٣٨- فَجَعَلَ بَطْنَ نَاقَتِهِ اَلْقَصْوَاءِ إِلَى الصَّخَرَاتِ٢، وَجَعَلَ حَبْلَ المشاة٣ بين يديه، واستقبل القبلة،<br>
-                                ٣٩- فلم يزل واقفًا حتى غربت الشمس، وذهبت الصفرة قليلًا حتى غاب القرص،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>35.</strong> Kemudian Bilal azan, lalu iqamah dan beliau shalat Dzuhur. Lalu Bilal iqamah (lagi) dan beliau shalat Ashar.</p>
-                                <p><strong>36.</strong> Dan beliau tidak mengerjakan shalat (sunnah) apapun di antara keduanya.</p>
-                                <p><strong>37.</strong> Kemudian beliau berkendara hingga tiba di tempat wuquf.</p>
-                                <p><strong>38.</strong> Beliau memposisikan perut untanya Al-Qaswa berdekatan dengan batu-batu besar, menjadikan tempat pejalan kaki di hadapannya, و beliau menghadap kiblat.</p>
-                                <p><strong>39.</strong> Beliau terus-menerus wuquf hingga matahari terbenam, cahaya kuning sedikit memudar, dan piringan matahari tenggelam sepenuhnya.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Halaman 6 -->
-                <div class="page-content hidden" id="page-6">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Mabit di Muzdalifah</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">🌌</span>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٤٠- وأردف أسامة بن زيد خلفه، ودفع رسول الله -صلى الله عليه وسلم- وَقَدْ شَنَقَ لِلْقَصْوَاءِ اَلزِّمَامَ١، حَتَّى إِنَّ رأَسَهَا يصيب مَوْرِكَ رَحْلِهِ٢،<br>
-                                ٤١- وَيَقُولُ بِيَدِهِ اَلْيُمْنَى: "أَيُّهَا اَلنَّاسُ، اَلسَّكِينَةَ، اَلسَّكِينَةَ"، كُلَّمَا أَتَى حَبْلًا٣ مِنْ اَلْحِبَالِ أَرْخَى لَهَا قَلِيلًا حَتَّى تَصْعَدَ،<br>
-                                ٤٢- حَتَّى أَتَى اَلْمُزْدَلِفَةَ،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>40.</strong> Beliau membonceng Usamah bin Zaid di belakangnya. Lalu Rasulullah ﷺ bertolak, beliau benar-benar menarik tali kekang unta Al-Qaswa dengan kuat hingga kepala unta itu menyentuh ujung sandaran pelana.</p>
-                                <p><strong>41.</strong> Sambil memberi isyarat dengan tangan kanannya beliau berseru: "Wahai manusia, tenanglah, tenanglah." Setiap kali mendaki sebuah bukit pasir, beliau mengendurkan sedikit talinya agar unta mudah mendaki.</p>
-                                <p><strong>42.</strong> Hingga beliau tiba di Muzdalifah.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٤٣- فَصَلَّى بِهَا اَلْمَغْرِبَ وَالْعِشَاءَ، بِأَذَانٍ وَاحِدٍ وَإِقَامَتَيْنِ،<br>
-                                ٤٤- وَلَمْ يُسَبِّحْ بَيْنَهُمَا شَيْئًا،<br>
-                                ٤٥- ثُمَّ اِضْطَجَعَ حتى طلع الفجر٤،<br>
-                                ٤٦- وصلى الفجر حين تبين له الصبح بأذان وإقامة،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>43.</strong> Di sana beliau melaksanakan shalat Maghrib dan Isya dengan satu azan dan dua iqamah.</p>
-                                <p><strong>44.</strong> Dan tidak mengerjakan shalat sunnah apapun di sela-selanya.</p>
-                                <p><strong>45.</strong> Kemudian beliau berbaring (tidur) hingga terbit fajar.</p>
-                                <p><strong>46.</strong> Lalu beliau shalat Subuh saat waktu pagi telah jelas bagi beliau, dengan azan dan iqamah.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Halaman 7 -->
-                <div class="page-content hidden" id="page-7">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Masy'aril Haram & Lempar Jumrah</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">🎯</span>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٤٧- ثم ركب القصواء حتى أتى المشعر الحرام،<br>
-                                ٤٨- فاستقبل القبلة،<br>
-                                ٤٩- فدعاه، وكبرَّه، وهَلَّلَهُ، ووحده،<br>
-                                ٥٠- فلم يزل واقفًا حتى أسفر جدًّا،<br>
-                                ٥١- فدفع قبل أن تطلع الشمس،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>47.</strong> Kemudian beliau menunggangi Al-Qaswa hingga tiba di Masy'aril Haram.</p>
-                                <p><strong>48.</strong> Beliau menghadap kiblat,</p>
-                                <p><strong>49.</strong> Lalu memanjatkan doa kepada-Nya, bertakbir, bertahlil, dan mentauhidkan-Nya.</p>
-                                <p><strong>50.</strong> Beliau terus wuquf di sana hingga langit menjadi sangat terang.</p>
-                                <p><strong>51.</strong> Lalu beliau bertolak meninggalkan tempat itu sebelum matahari terbit.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-amber-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٥٢- وَأَرْدَفَ اَلْفَضْلَ بْنَ اَلْعَبَّاسِ، حَتَّى أَتَى بَطْنَ مُحَسِّر١، فَحَرَّكَ قَلِيلًا،<br>
-                                ٥٣- ثُمَّ سَلَكَ اَلطَّرِيقَ اَلْوُسْطَى اَلَّتِي تَخْرُجُ عَلَى اَلْجَمْرَةِ اَلْكُبْرَى،<br>
-                                ٥٤- حَتَّى أَتَى اَلْجَمْرَةَ اَلَّتِي عِنْدَ اَلشَّجَرَةِ٢، فَرَمَاهَا بِسَبْعِ حَصَيَاتٍ٣،<br>
-                                ٥٥- يكبر مع كل حصاة منها، ٥٦- مثل حصى الْخَذْف،<br>
-                                ٥٧- رمى من بطن الوادي،
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>52.</strong> Beliau kali ini membonceng Al-Fadhl bin Abbas, hingga tiba di perut lembah Muhassir, beliau sedikit mempercepat laju kendaraannya.</p>
-                                <p><strong>53.</strong> Kemudian beliau menempuh jalan tengah yang tembus menuju Jumrah Kubra (Aqabah).</p>
-                                <p><strong>54.</strong> Hingga beliau tiba di Jumrah yang berada di dekat pohon, beliau melemparnya dengan tujuh butir kerikil.</p>
-                                <p><strong>55-56.</strong> Beliau bertakbir pada setiap lemparan kerikilnya. (Ukuran batunya) adalah sebesar batu khadzaf (seukuran kacang).</p>
-                                <p><strong>57.</strong> Beliau melempar dari arah perut lembah.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Halaman 8 -->
-                <div class="page-content hidden" id="page-8">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Menyembelih & Tawaf Ifadah</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">🔪</span>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٥٨- ثم انصرف إلى المنحر،<br>
-                                ٥٩- فنحر ثلاثًا وستين بيده،<br>
-                                ٦٠- kemudian أعطى عليًّا فنحر ما غبر، وأشركه في هديه،<br>
-                                ٦١- ثم أمر من كل بُدنة بِبَضْعة، فجعلت في قدر، وطبخت، فأكلا من لحمها، وشربا من مرقها.
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>58.</strong> Kemudian beliau beranjak menuju tempat penyembelihan (Manhar).</p>
-                                <p><strong>59.</strong> Beliau menyembelih 63 ekor unta dengan tangan beliau sendiri.</p>
-                                <p><strong>60.</strong> Kemudian beliau menyerahkan kepada Ali, lalu Ali menyembelih sisanya. Beliau menyertakan Ali dalam hewan kurban tersebut.</p>
-                                <p><strong>61.</strong> Kemudian beliau memerintahkan agar diambil sepotong daging dari setiap unta, lalu dimasukkan ke dalam belanga dan dimasak. Kemudian keduanya (Nabi dan Ali) memakan sebagian dagingnya dan meminum kuahnya.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border-r-4 border-emerald-500">
-                            <p class="arabic-text text-2xl md:text-3xl text-slate-800 mb-6" dir="rtl">
-                                ٦٢- ثم ركب رسول الله -صلى الله عليه وسلم- فَأَفَاضَ إِلَى اَلْبَيْتِ١،<br>
-                                ٦٣- فَصَلَّى بِمَكَّةَ اَلظُّهْرَ،<br>
-                                ٦٤- فَأَتَى بَنِي عَبْدِ اَلْمُطَّلِبِ، يَسْقُونَ عَلَى زَمْزَمَ، فَقَالَ: "اِنْزِعُوا بَنِي عَبْدِ اَلْمُطَّلِبِ، فَلَوْلَا أَنْ يَغْلِبَكُمْ اَلنَّاسُ عَلَى سِقَايَتِكُمْ لَنَزَعْتُ مَعَكُمْ، فَنَاوَلُوهُ دَلْوًا فَشَرِبَ مِنْهُ" رَوَاهُ مُSلِمٌ٢.
-                            </p>
-                            <div class="border-t border-slate-100 pt-4 latin-text text-slate-600 text-[15px] space-y-3 leading-relaxed">
-                                <p><strong>62.</strong> Kemudian Rasulullah ﷺ menaiki kendaraannya lalu bertolak (Tawaf Ifadah) ke Baitullah.</p>
-                                <p><strong>63.</strong> Maka beliau melaksanakan shalat Dzuhur di Makkah.</p>
-                                <p><strong>64.</strong> Lalu beliau mendatangi Bani Abdul Muthalib yang sedang membagikan air di sumur Zamzam. Beliau bersabda: "Timbalah air wahai Bani Abdul Muthalib. Seandainya tidak karena khawatir orang-orang akan merebut tugas kalian ini, niscaya aku akan ikut menimba bersama kalian." Maka mereka memberikan beliau seember penuh, lalu beliau meminum darinya. (Diriwayatkan oleh Muslim)².</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Halaman 9 (Kesimpulan) -->
-                <div class="page-content hidden" id="page-9">
-                    <div class="flex items-center gap-4 mb-8 latin-text justify-start flex-row-reverse border-b-2 border-emerald-100 pb-4">
-                        <h2 class="text-2xl md:text-3xl font-bold text-emerald-900">Penutup & Kesimpulan</h2>
-                        <span class="text-4xl bg-emerald-50 p-3 rounded-2xl shadow-inner">📖</span>
-                    </div>
-                    <div class="bg-gradient-to-br from-emerald-800 to-emerald-900 rounded-3xl p-8 shadow-xl text-center text-emerald-50 relative overflow-hidden">
-                        <div class="absolute -right-10 -top-10 opacity-10 text-9xl">🕋</div>
-                        <div class="relative z-10">
-                            <p class="arabic-text text-3xl mb-8 text-amber-400" dir="rtl">
-                                ٢٧٣- وَكَانَ صلى الله عليه وسلم يَفْعَلُ اَلْمَنَاسِكَ، وَيَقُولُ لِلنَّاسِ: "خُذُوا عني مناسككم" ٣.<br>
-                                فَأَكْمَلُ مَا يَكُونُ مِنْ اَلْحَجِّ: اَلِاقْتِدَاءُ بِالنَّبِيِّ -صلى الله عليه وسلم- فِيهِ وَأَصْحَابِهِ، رَضِيَ الله عنهم.
-                            </p>
-                            <div class="border-t border-emerald-600/50 pt-6 latin-text text-emerald-100/90 text-[16px] max-w-2xl mx-auto space-y-4">
-                                <p><strong>273.</strong> Dan dahulu Nabi ﷺ melaksanakan manasik haji seraya bersabda kepada manusia: <strong>"Ambillah dariku tata cara manasik haji kalian."</strong>³</p>
-                                <p class="italic text-amber-200 mt-6 bg-emerald-950/50 p-4 rounded-xl">Maka haji yang paling sempurna adalah: Meneladani Nabi ﷺ di dalamnya, dan juga meneladani para sahabatnya radhiyallahu 'anhum.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center mt-12 pb-10">
-                        <button onclick="goToPage(0)" class="latin-text text-emerald-600 font-medium hover:text-emerald-800 underline decoration-2 underline-offset-4">
-                            Kembali ke Awal
-                        </button>
-                    </div>
-                </div>
-
-            </div> <!-- End of contentContainer -->
-
-            <!-- Bottom Navigation Bar (Fixed) -->
-            <div class="fixed bottom-0 right-0 left-0 lg:left-0 lg:mr-72 bg-white border-t border-slate-200 p-4 z-30 shadow-[0_-4px_10px_rgba(0,0,0,0.03)] flex justify-between items-center latin-text">
-                <button id="btnPrev" onclick="prevPage()" class="flex items-center gap-2 px-4 py-2 text-emerald-700 bg-emerald-50 rounded-lg font-medium hover:bg-emerald-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-                    ← <span class="hidden sm:inline">Sebelumnya</span>
-                </button>
-                <div class="text-slate-400 text-sm font-medium flex items-center gap-4">
-                    <span>Materi <span id="pageIndicator" class="text-emerald-600 font-bold">1/10</span></span>
-                </div>
-                <button id="btnNext" onclick="nextPage()" class="flex items-center gap-2 px-4 py-2 text-white bg-emerald-600 rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-md">
-                    <span class="hidden sm:inline">Selanjutnya</span> →
-                </button>
-            </div>
-
-            <!-- Floating Action Button for Gemini Chat -->
-            <button onclick="toggleChat()" class="fixed bottom-24 left-4 lg:left-80 z-40 bg-amber-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 hover:bg-amber-400 transition-all flex items-center justify-center latin-text group">
-                <span class="text-2xl mr-1">✨</span>
-                <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 font-bold">
-                    <span class="pl-2">Tanya AI</span>
-                </span>
-            </button>
-
-            <!-- Gemini Chat Modal -->
-            <div id="chatModal" class="fixed inset-0 z-50 hidden items-end justify-center sm:items-center p-4 bg-slate-900/50 transition-opacity">
-                <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col h-[80vh] sm:h-[600px] transform scale-95 transition-transform duration-300 latin-text overflow-hidden" id="chatModalContent">
-                    <!-- Chat Header -->
-                    <div class="bg-emerald-900 text-white p-4 flex justify-between items-center shrink-0">
-                        <div class="flex items-center gap-2">
-                            <span class="text-2xl">✨</span>
-                            <div>
-                                <h3 class="font-bold">Asisten Fikih Haji AI</h3>
-                                <p class="text-xs text-emerald-200" id="chatContextDesc">Konteks: Mukadimah</p>
-                            </div>
-                        </div>
-                        <button onclick="toggleChat()" class="text-white hover:text-amber-400 text-2xl font-bold">&times;</button>
                     </div>
                     
-                    <!-- Chat Messages Area -->
-                    <div id="chatMessages" class="flex-1 p-4 overflow-y-auto bg-slate-50 flex flex-col gap-4">
-                        <!-- AI Greeting -->
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 text-xl">✨</div>
-                            <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-slate-700 border border-slate-100 leading-relaxed">
-                                Assalamu'alaikum! Saya adalah Asisten AI yang siap membantu menjelaskan Fikih Haji berdasarkan Hadits Jabir RA. Ada yang ingin ditanyakan tentang bagian ini?
+                    <!-- Hierarki Judul Baru -->
+                    <div class="inline-block bg-amber-50 border border-amber-200/60 px-4 py-1.5 rounded-full mb-3 shadow-sm">
+                        <p class="text-amber-700 font-black uppercase tracking-[0.2em] text-[9px]">PONPES NURUL ILMI LAHAT</p>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-950 to-blue-600 tracking-tighter mb-2">PELITA</h1>
+                    <p class="text-slate-500 font-bold mt-1 uppercase tracking-[0.15em] text-[10px]">Portal E-Layanan Izin Terpadu</p>
+                </div>
+
+                <div class="glass p-8 md:p-10 rounded-[2.5rem] shadow-2xl shadow-blue-900/5">
+                    <form onsubmit="handleLogin(event)" class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700 ml-1">Username</label>
+                            <div class="relative">
+                                <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="username" required class="form-input pl-11 bg-white/50" placeholder="ID Pegawai / Kepala">
                             </div>
                         </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700 ml-1">Password</label>
+                            <div class="relative">
+                                <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="password" id="password" class="form-input pl-11 bg-white/50" placeholder="••••••••">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary w-full text-white font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-3 group">
+                            <span>Masuk Sistem</span>
+                            <i class="fas fa-sign-in-alt text-xs group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </form>
+                    <div class="mt-8 pt-8 border-t border-slate-100 text-center">
+                        <p class="text-xs text-slate-400 font-semibold tracking-widest uppercase mb-3">Login Demo</p>
+                        <div class="flex justify-center gap-3">
+                            <button onclick="document.getElementById('username').value='pegawai'" class="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-colors">Pegawai</button>
+                            <button onclick="document.getElementById('username').value='kepala'" class="text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition-colors">Kepala Pondok</button>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Chat Input Area -->
-                    <div class="p-4 bg-white border-t border-slate-100 shrink-0">
-                        <form id="chatForm" onsubmit="handleChatSubmit(event)" class="flex gap-2 relative">
-                            <input type="text" id="chatInput" placeholder="Tanyakan sesuatu..." class="flex-1 bg-slate-50 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors" autocomplete="off">
-                            <button type="submit" id="btnSendChat" class="bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -ml-1" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="hidden animate-fade-in space-y-6">
+            
+            <!-- Navbar -->
+            <header class="glass sticky top-4 z-40 px-6 py-4 rounded-[2rem] shadow-lg flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-md border border-blue-50 text-blue-600 text-xl font-black">
+                        NI
+                    </div>
+                    <div>
+                        <h2 id="display-name" class="font-extrabold text-slate-800 leading-none mb-1">Nama</h2>
+                        <div class="flex items-center gap-2">
+                            <span id="display-role" class="text-[9px] font-black uppercase tracking-widest text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Role</span>
+                            <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                            <span class="text-[10px] text-slate-500 font-medium" id="current-date"></span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="handleLogout()" class="group w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all border border-slate-100">
+                    <i class="fas fa-power-off text-sm group-hover:scale-110 transition-transform"></i>
+                </button>
+            </header>
+
+            <main class="grid lg:grid-cols-12 gap-6">
+                
+                <!-- LEFT COLUMN: Input Form -->
+                <div id="form-section" class="lg:col-span-5 space-y-6">
+                    <div class="glass p-6 md:p-8 rounded-[2rem] shadow-xl border border-white">
+                        <div class="mb-6">
+                            <h3 class="text-xl font-extrabold text-blue-950 flex items-center gap-2">
+                                <i class="fas fa-file-signature text-blue-600"></i> Pengajuan Izin
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-1">Isi formulir sesuai pedoman kepegawaian pondok.</p>
+                        </div>
+
+                        <form onsubmit="submitIzin(event)" class="space-y-5">
+                            
+                            <!-- Main Category -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Kategori Perizinan <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <select id="kategori_izin" required onchange="handleCategoryChange()" class="form-input appearance-none pr-10 cursor-pointer">
+                                        <option value="" disabled selected>Pilih Kategori Izin...</option>
+                                        <option value="A">A. Izin Keluar Pada Saat Jam Kerja</option>
+                                        <option value="B">B. Izin Tidak Masuk Kerja</option>
+                                        <option value="C">C. Izin Sakit</option>
+                                        <option value="D">D. Izin Terlambat Datang Kerja</option>
+                                        <option value="E">E. Izin Cuti</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Fields Container -->
+                            <div id="dynamic_fields" class="space-y-5 hidden p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50">
+                                
+                                <!-- DYNAMIC: Tipe Cuti -->
+                                <div id="field_tipe_cuti" class="hidden space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Jenis Cuti <span class="text-rose-500">*</span></label>
+                                    <select id="tipe_cuti" class="form-input">
+                                        <option value="" disabled selected>Pilih Jenis Cuti...</option>
+                                        <option value="Menikah (14 Hari)">1. Menikah (14 Hari)</option>
+                                        <option value="Melahirkan - Suami (3 Hari)">2. Melahirkan - Suami (3 Hari)</option>
+                                        <option value="Melahirkan - Istri (3 Bulan)">2. Melahirkan - Istri (3 Bulan)</option>
+                                        <option value="Istri/Anak Sakit (2 Hari)">3. Istri/Anak Sakit (2 Hari)</option>
+                                        <option value="Orang Tua Meninggal (7/14 Hari)">4. Orang Tua Meninggal (7/14 Hari)</option>
+                                        <option value="Ujian Formal (7 Hari)">5. Ujian UTS/UAS Formal (7 Hari)</option>
+                                        <option value="Berhaji">6. Berhaji</option>
+                                        <option value="Umrah Pertama (14 Hari)">7. Berumrah (Pertama Kali) - 14 Hari</option>
+                                        <option value="Umrah Ke-2 dst (14 Hari)">8. Berumrah (Ke-2 dst) - 14 Hari</option>
+                                    </select>
+                                </div>
+
+                                <!-- DYNAMIC: Kriteria Sakit -->
+                                <div id="field_tipe_sakit" class="hidden space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Kriteria Medis <span class="text-rose-500">*</span></label>
+                                    <select id="tipe_sakit" class="form-input text-sm">
+                                        <option value="" disabled selected>Pilih Kondisi Kriteria...</option>
+                                        <option value="Perawatan Medis">a. Perawatan Medis (Demam/Infeksi/Luka)</option>
+                                        <option value="Cedera/Kecelakaan">b. Cedera Fisik atau Kecelakaan</option>
+                                        <option value="Sakit Menular">c. Sakit Menular (Hepatitis/dll)</option>
+                                        <option value="Sakit Kronis">d. Sakit Kronis (Kambuh/Asma)</option>
+                                        <option value="Kehamilan">e. Kehamilan (Morning sickness/Medis serius)</option>
+                                        <option value="Isolasi">f. Isolasi Medis (TBC/Menular serius)</option>
+                                        <option value="Rekomendasi Dokter">g. Dokter Menyarankan Istirahat</option>
+                                        <option value="Lainnya">h. Lainnya (Dipertimbangkan Kepala Pondok)</option>
+                                    </select>
+                                </div>
+
+                                <!-- DYNAMIC: Kriteria Terlambat -->
+                                <div id="field_tipe_terlambat" class="hidden space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Alasan Terlambat <span class="text-rose-500">*</span></label>
+                                    <select id="tipe_terlambat" class="form-input text-sm">
+                                        <option value="" disabled selected>Pilih Kriteria Alasan...</option>
+                                        <option value="Kondisi Kesehatan">a. Kondisi kesehatan</option>
+                                        <option value="Kendala Transportasi">b. Kendala transportasi / Sarana terganggu</option>
+                                        <option value="Darurat Keluarga">c. Keadaan darurat / keperluan mendesak keluarga</option>
+                                        <option value="Tak Terduga">d. Kejadian tidak terduga (Cuaca buruk/bencana)</option>
+                                    </select>
+                                </div>
+
+                                <!-- DYNAMIC: Dates -->
+                                <div id="field_tanggal" class="hidden grid grid-cols-2 gap-4">
+                                    <div class="space-y-1.5">
+                                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Tgl Mulai</label>
+                                        <input type="date" id="tgl_mulai" class="form-input text-sm" onchange="checkSakitDates()">
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Tgl Selesai</label>
+                                        <input type="date" id="tgl_selesai" class="form-input text-sm" onchange="checkSakitDates()">
+                                    </div>
+                                </div>
+
+                                <!-- DYNAMIC: Surat Dokter Upload (For Sakit > 1 Hari) -->
+                                <div id="field_surat_dokter" class="hidden space-y-1.5 pt-2">
+                                    <label class="text-xs font-bold text-rose-500 uppercase tracking-wider ml-1">Upload Surat Keterangan Dokter <span class="text-rose-500">*</span></label>
+                                    <input type="file" id="file_surat" accept="image/*" class="form-input text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                    <p class="text-[10px] text-slate-500 italic ml-1">Wajib karena izin sakit lebih dari 1 hari.</p>
+                                </div>
+
+                                <!-- DYNAMIC: Times (For A and D) -->
+                                <div id="field_waktu" class="hidden grid grid-cols-2 gap-4">
+                                    <div class="space-y-1.5" id="wrapper_jam_mulai">
+                                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1" id="lbl_jam_mulai">Jam Keluar</label>
+                                        <input type="time" id="jam_mulai" class="form-input text-sm">
+                                    </div>
+                                    <!-- Jam selesai is handled via History Card button later for Category A -->
+                                </div>
+
+                                <!-- DYNAMIC: Konsekuensi (Untuk B) -->
+                                <div id="field_konsekuensi" class="hidden space-y-1.5 pt-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Konsekuensi</label>
+                                    <div class="bg-rose-50 text-rose-700 p-3 rounded-xl text-sm font-bold border border-rose-200">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i> Pemotongan Gaji
+                                    </div>
+                                </div>
+
+                                <!-- Universal: Keterangan -->
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Keterangan / Alasan Detail <span class="text-rose-500">*</span></label>
+                                    <textarea id="keterangan" required rows="2" class="form-input" placeholder="Tuliskan keterangan lebih lanjut..."></textarea>
+                                </div>
+
+                                <!-- Dynamic Warning Notice -->
+                                <div id="warning_notice" class="hidden flex items-start gap-3 bg-amber-50 text-amber-800 p-4 rounded-xl text-xs font-medium border border-amber-200/50">
+                                    <i class="fas fa-info-circle mt-0.5 text-amber-500"></i>
+                                    <span id="warning_text">Catatan pedoman...</span>
+                                </div>
+
+                            </div> <!-- End Dynamic -->
+
+                            <button type="submit" class="btn-primary w-full text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-blue-900/10 active:scale-[0.98]">
+                                Ajukan ke Kepala Pondok
                             </button>
                         </form>
                     </div>
-                </div>
-            </div>
 
-        </main>
+                    <!-- Admin Widget Placeholder -->
+                    <div id="admin-widget" class="hidden glass p-6 rounded-[2rem] bg-blue-900 text-white shadow-xl relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h4 class="text-sm font-bold opacity-80 uppercase tracking-widest mb-1 text-blue-200">Akses Pimpinan</h4>
+                            <p class="font-bold leading-tight">Peninjauan langsung oleh Kepala Pondok.</p>
+                            <div class="mt-4 flex gap-4">
+                                <div class="bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm">
+                                    <span class="block text-[10px] uppercase tracking-wider opacity-70">Menunggu</span>
+                                    <span id="stat-pending" class="text-2xl font-black text-amber-400">0</span>
+                                </div>
+                                <div class="bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm">
+                                    <span class="block text-[10px] uppercase tracking-wider opacity-70">Diproses</span>
+                                    <span id="stat-done" class="text-2xl font-black text-emerald-400">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <i class="fas fa-mosque absolute -right-4 -bottom-4 text-white/5 text-8xl"></i>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: History/List -->
+                <div class="lg:col-span-7">
+                    <div class="glass p-6 md:p-8 rounded-[2.5rem] shadow-xl border border-white min-h-[600px]">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 id="list-title" class="text-xl font-extrabold text-blue-950">Data Pengajuan</h3>
+                            <button onclick="renderList()" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">
+                                <i class="fas fa-sync-alt text-xs"></i>
+                            </button>
+                        </div>
+
+                        <!-- Content List -->
+                        <div id="main-list-container" class="space-y-4">
+                            <!-- Items injected via JS -->
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="empty-state" class="hidden flex flex-col items-center justify-center py-24 text-slate-300">
+                            <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
+                                <i class="fas fa-inbox text-4xl"></i>
+                            </div>
+                            <p class="font-bold uppercase text-xs tracking-[0.2em]">Tidak ada data</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
 
-    <!-- JavaScript Logic -->
-    <script>
-        // Data Struktur Navigasi
-        const sections = [
-            { id: 0, title: "Mukadimah", icon: "📜" },
-            { id: 1, title: "Ihram & Talbiyah", icon: "🐪" },
-            { id: 2, title: "Tawaf Baitullah & Sa'i", icon: "🕋" },
-            { id: 3, title: "Umrah & Kedatangan Ali", icon: "👥" },
-            { id: 4, title: "Hari Tarwiyah (Mina)", icon: "⛺" },
-            { id: 5, title: "Arafah & Khutbah Wada'", icon: "🤲" },
-            { id: 6, title: "Mabit di Muzdalifah", icon: "🌌" },
-            { id: 7, title: "Masy'aril Haram & Jumrah", icon: "🎯" },
-            { id: 8, title: "Menyembelih & Ifadah", icon: "🔪" },
-            { id: 9, title: "Kesimpulan Penutup", icon: "📖" }
-        ];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        let currentPage = 0;
-        const totalPages = sections.length;
+        // Firebase Setup
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbyfqeO1i3WC-Flxq9BN41zEW9maQsmd0",
+            authDomain: "perizinan-ppnil.firebaseapp.com",
+            projectId: "perizinan-ppnil",
+            storageBucket: "perizinan-ppnil.firebasestorage.app",
+            messagingSenderId: "976907019421",
+            appId: "1:976907019421:web:5e5499ba4c241aa73ba074",
+            measurementId: "G-42VNPBWFLV"
+        };
 
-        // Inisialisasi Aplikasi
-        function initApp() {
-            renderSidebar();
-            updateUI();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Required paths following the environment security rules
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'perizinan-ppnil';
+        const getColRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'perizinan');
+        const getDocRef = (id) => doc(db, 'artifacts', appId, 'public', 'data', 'perizinan', id);
+
+        // Data State Management
+        let currentUser = null;
+        let activeJamKembaliId = null;
+        let activeAlasanId = null;
+        let activeAlasanStatus = null;
+        let izinData = [];
+        let unsubscribe = null;
+
+        // Simulasi Akun
+        const users = {
+            'pegawai': { name: 'Ahmad Fauzi, S.Pd', role: 'pegawai' },
+            'kepala': { name: 'K.H. Dr. Ridwan', role: 'kepala' }
+        };
+
+        // Initialize Firebase Data Stream
+        const initFirebase = async () => {
+            try {
+                // Ensure proper authentication handling
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (tokenError) {
+                    // Fallback jika token bawaan sistem bentrok dengan Config Firebase kustom Anda
+                    console.warn("Token mismatch terdeteksi, beralih ke Anonymous Sign-In.", tokenError);
+                    await signInAnonymously(auth);
+                }
+
+                unsubscribe = onSnapshot(getColRef(), (snapshot) => {
+                    izinData = [];
+                    snapshot.forEach((doc) => {
+                        izinData.push({ id: doc.id, ...doc.data() });
+                    });
+                    // Sort by timestamp desc manually to comply with limitations
+                    izinData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    if(currentUser) renderList();
+                }, (error) => {
+                    console.error("Firestore error:", error);
+                    notify("Gagal menyinkronkan data", "error");
+                });
+            } catch (error) {
+                console.error("Firebase Auth Error:", error);
+                if (error.code === 'auth/configuration-not-found') {
+                    const notif = document.getElementById('notification');
+                    const content = document.getElementById('notif-content');
+                    content.innerHTML = `<i class="fas fa-exclamation-triangle text-3xl"></i> <div><b>ERROR FIREBASE:</b><br><span class="text-xs font-normal">Harap aktifkan 'Anonymous' di menu Authentication -> Sign-in method pada Firebase Console Anda.</span></div>`;
+                    content.className = `px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 font-semibold text-white bg-rose-600 shadow-rose-500/40`;
+                    notif.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                    notif.classList.add('opacity-100', 'scale-100', 'translate-y-4');
+                } else {
+                    notify("Koneksi database gagal: " + error.message, "error");
+                }
+            }
+        };
+        initFirebase();
+
+        // Kategori Map & Badge Colors
+        const catDetails = {
+            'A': { label: 'Izin Keluar Jam Kerja', icon: 'fa-sign-out-alt', color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
+            'B': { label: 'Izin Tidak Masuk', icon: 'fa-calendar-times', color: 'text-rose-600 bg-rose-50 border-rose-200' },
+            'C': { label: 'Izin Sakit', icon: 'fa-briefcase-medical', color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
+            'D': { label: 'Izin Terlambat', icon: 'fa-user-clock', color: 'text-amber-600 bg-amber-50 border-amber-200' },
+            'E': { label: 'Izin Cuti', icon: 'fa-plane-departure', color: 'text-blue-600 bg-blue-50 border-blue-200' }
+        };
+
+        // General Navigation
+        function showView(viewId) {
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById(viewId).classList.remove('hidden');
         }
 
-        // Render Sidebar Menu
-        function renderSidebar() {
-            const navContainer = document.getElementById('navLinks');
-            navContainer.innerHTML = '';
+        // Notification UI
+        function notify(message, type = 'success') {
+            const notif = document.getElementById('notification');
+            const content = document.getElementById('notif-content');
             
-            sections.forEach(sec => {
-                const btn = document.createElement('button');
-                btn.className = `w-full text-right px-6 py-4 border-b border-slate-100 flex items-center justify-end gap-3 transition-colors hover:bg-emerald-50 ${sec.id === currentPage ? 'bg-emerald-50 text-emerald-700 font-bold border-r-4 border-r-emerald-500' : 'text-slate-600'}`;
-                btn.innerHTML = `
-                    <span>${sec.title}</span>
-                    <span class="text-xl">${sec.icon}</span>
-                `;
-                btn.onclick = () => {
-                    goToPage(sec.id);
-                    if (window.innerWidth < 1024) toggleSidebar(); // Close sidebar on mobile
-                };
-                navContainer.appendChild(btn);
+            const styles = {
+                success: { i: 'fa-check-circle', c: 'bg-emerald-600 shadow-emerald-500/40' },
+                error: { i: 'fa-exclamation-triangle', c: 'bg-rose-600 shadow-rose-500/40' },
+                info: { i: 'fa-info-circle', c: 'bg-blue-600 shadow-blue-500/40' }
+            };
+
+            content.innerHTML = `<i class="fas ${styles[type].i} text-xl"></i> <span>${message}</span>`;
+            content.className = `px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 font-semibold text-white ${styles[type].c}`;
+            
+            notif.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+            notif.classList.add('opacity-100', 'scale-100', 'translate-y-4');
+            
+            setTimeout(() => {
+                notif.classList.remove('opacity-100', 'scale-100', 'translate-y-4');
+                notif.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+            }, 5000);
+        }
+
+        // Auth Logic
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.toLowerCase();
+            
+            if (users[username]) {
+                currentUser = { ...users[username], username };
+                document.getElementById('display-name').textContent = currentUser.name;
+                document.getElementById('display-role').textContent = currentUser.role === 'kepala' ? 'Pimpinan/Kepala' : 'Pegawai';
+                
+                initDashboard();
+                showView('view-dashboard');
+            } else {
+                notify('User tidak ditemukan!', 'error');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('kategori_izin').value = "";
+            handleCategoryChange(); // reset form
+            showView('view-login');
+        }
+
+        // Dashboard Init
+        function initDashboard() {
+            const today = new Date();
+            document.getElementById('current-date').textContent = today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+            if (currentUser.role === 'pegawai') {
+                document.getElementById('form-section').classList.remove('hidden');
+                document.getElementById('admin-widget').classList.add('hidden');
+                document.getElementById('list-title').textContent = 'Riwayat Pengajuan Saya';
+            } else {
+                document.getElementById('form-section').classList.add('hidden');
+                document.getElementById('admin-widget').classList.remove('hidden');
+                document.getElementById('list-title').textContent = 'Antrian Peninjauan Kepala Pondok';
+            }
+            renderList();
+        }
+
+        // Form Logic (Dynamic Display based on Pedoman)
+        function handleCategoryChange() {
+            const cat = document.getElementById('kategori_izin').value;
+            const dynamicBox = document.getElementById('dynamic_fields');
+            const noticeBox = document.getElementById('warning_notice');
+            const noticeText = document.getElementById('warning_text');
+            
+            // Hide all first
+            const fields = ['tipe_cuti', 'tipe_sakit', 'tipe_terlambat', 'tanggal', 'waktu', 'konsekuensi', 'surat_dokter'];
+            fields.forEach(f => document.getElementById(`field_${f}`).classList.add('hidden'));
+            
+            // Required resets
+            document.querySelectorAll('#dynamic_fields input, #dynamic_fields select').forEach(el => el.required = false);
+
+            if (!cat) {
+                dynamicBox.classList.add('hidden');
+                return;
+            }
+            
+            dynamicBox.classList.remove('hidden');
+            noticeBox.classList.remove('hidden');
+
+            switch(cat) {
+                case 'A': // Keluar jam kerja
+                    showFields(['waktu', 'tanggal']);
+                    document.getElementById('lbl_jam_mulai').textContent = "Jam Mulai Izin Keluar";
+                    noticeText.innerHTML = "Setelah izin disetujui, Anda wajib melapor ke Satpam. Anda juga harus menginput 'Jam Kembali' di aplikasi ini nantinya.";
+                    break;
+                case 'B': // Tidak masuk
+                    showFields(['tanggal', 'konsekuensi']);
+                    noticeText.innerHTML = "Hanya boleh 1x sebulan, maksimal 2 hari. Konsekuensi: Pemotongan Gaji otomatis.";
+                    break;
+                case 'C': // Sakit
+                    showFields(['tipe_sakit', 'tanggal']);
+                    noticeText.innerHTML = "Pilih kriteria medis. Jika berlanjut > 1 hari, WAJIB upload surat keterangan dokter.";
+                    checkSakitDates();
+                    break;
+                case 'D': // Terlambat
+                    showFields(['tipe_terlambat', 'waktu', 'tanggal']);
+                    document.getElementById('lbl_jam_mulai').textContent = "Jam Tiba / Kedatangan";
+                    noticeText.innerHTML = "Jika memenuhi kriteria (Kesehatan/Transport/Darurat/Bencana), sanksi ditiadakan oleh Kepala Pondok.";
+                    break;
+                case 'E': // Cuti
+                    showFields(['tipe_cuti', 'tanggal']);
+                    noticeText.innerHTML = "Pilih jenis cuti. Durasi dan waktu pengajuan harus sesuai dengan Pedoman Tabel E.";
+                    break;
+            }
+        }
+
+        function showFields(fieldList) {
+            fieldList.forEach(f => {
+                const el = document.getElementById(`field_${f}`);
+                el.classList.remove('hidden');
+                // Make inputs required (except file which is handled conditionally, and radios)
+                el.querySelectorAll('input:not([type="file"]), select').forEach(input => {
+                    input.required = true;
+                });
             });
         }
 
-        // Start App from Landing Page
-        function startApp() {
-            const landing = document.getElementById('landingPage');
-            const main = document.getElementById('mainApp');
+        function checkSakitDates() {
+            if (document.getElementById('kategori_izin').value !== 'C') return;
+            const t1 = document.getElementById('tgl_mulai').value;
+            const t2 = document.getElementById('tgl_selesai').value;
             
-            landing.style.opacity = '0';
-            setTimeout(() => {
-                landing.classList.add('hidden');
-                main.classList.remove('hidden');
-                main.classList.add('fade-in');
-                initApp();
-            }, 500);
-        }
-
-        // Toggle Sidebar on Mobile
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
+            const uploadField = document.getElementById('field_surat_dokter');
+            const fileInput = document.getElementById('file_surat');
             
-            if (sidebar.classList.contains('translate-x-full')) {
-                sidebar.classList.remove('translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('translate-x-full');
-                overlay.classList.add('hidden');
-            }
-        }
-
-        // Navigate to specific page
-        function goToPage(index) {
-            if (index < 0 || index >= totalPages) return;
-            currentPage = index;
-            updateUI();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            // Update chat context if modal is open
-            document.getElementById('chatContextDesc').innerText = `Konteks: ${sections[currentPage].title}`;
-        }
-
-        function prevPage() { goToPage(currentPage - 1); }
-        function nextPage() { goToPage(currentPage + 1); }
-
-        // Update UI (Pages, Buttons, Sidebar states)
-        function updateUI() {
-            // Hide all pages, show active page
-            for (let i = 0; i < totalPages; i++) {
-                const pageEl = document.getElementById(`page-${i}`);
-                if (i === currentPage) {
-                    pageEl.classList.remove('hidden');
-                    pageEl.classList.add('fade-in');
+            if (t1 && t2) {
+                const diffTime = new Date(t2) - new Date(t1);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                
+                if (diffDays > 1) {
+                    uploadField.classList.remove('hidden');
+                    fileInput.required = true;
                 } else {
-                    pageEl.classList.add('hidden');
-                    pageEl.classList.remove('fade-in');
-                }
-            }
-
-            // Update bottom nav buttons
-            document.getElementById('btnPrev').disabled = currentPage === 0;
-            document.getElementById('btnNext').disabled = currentPage === totalPages - 1;
-            
-            // Update indicator
-            document.getElementById('pageIndicator').innerText = `${currentPage + 1}/${totalPages}`;
-
-            // Re-render sidebar to update active styling
-            renderSidebar();
-        }
-
-        /* =========================================
-         * Gemini AI Chat Logic 
-         * ========================================= */
-        
-        const apiKey = "AIzaSyDpxkFDMOvEebWKljOZDM6wtT-wTfC9NVQ"; // API Key is provided by the execution environment
-
-        function toggleChat() {
-            const modal = document.getElementById('chatModal');
-            const content = document.getElementById('chatModalContent');
-            
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.getElementById('chatContextDesc').innerText = `Konteks: ${sections[currentPage].title}`;
-                setTimeout(() => content.classList.remove('scale-95'), 10);
-            } else {
-                content.classList.add('scale-95');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                }, 300);
-            }
-        }
-
-        async function fetchWithRetry(url, options, retries = 5) {
-            const delays = [1000, 2000, 4000, 8000, 16000];
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (!response.ok) {
-                        const errData = await response.json();
-                        throw new Error(`Error API (${response.status}): ${errData.error?.message || 'Ditolak oleh server'}`);
-                    }
-                    return await response.json();
-                } catch (error) {
-                    if (i === retries - 1) throw error;
-                    await new Promise(res => setTimeout(res, delays[i]));
+                    uploadField.classList.add('hidden');
+                    fileInput.required = false;
                 }
             }
         }
 
-        async function handleChatSubmit(e) {
+        // Submit Form Logic
+        async function submitIzin(e) {
             e.preventDefault();
-            const inputField = document.getElementById('chatInput');
-            const question = inputField.value.trim();
-            const btnSend = document.getElementById('btnSendChat');
+            const cat = document.getElementById('kategori_izin').value;
+            const now = new Date();
+            
+            // 1. Validation Logic (SOP Rules)
+            if (cat === 'B') {
+                const t1 = new Date(document.getElementById('tgl_mulai').value);
+                const t2 = new Date(document.getElementById('tgl_selesai').value);
+                const diffDays = Math.ceil(Math.abs(t2 - t1) / (1000 * 60 * 60 * 24)) + 1; 
+                
+                if (diffDays > 2) {
+                    notify('Ditolak: Izin Tidak Masuk maksimal 2 hari berturut-turut.', 'error');
+                    return;
+                }
 
-            if (!question) return;
+                // Cek kuota bulan ini (Max 1x)
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+                const countThisMonth = izinData.filter(d => 
+                    d.user === currentUser.username && 
+                    d.kategori === 'B' && 
+                    new Date(d.timestamp).getMonth() === currentMonth &&
+                    new Date(d.timestamp).getFullYear() === currentYear
+                ).length;
 
-            // Add user message to UI
-            appendMessage(question, 'user');
-            inputField.value = '';
-            inputField.disabled = true;
-            btnSend.disabled = true;
+                if (countThisMonth >= 1) {
+                    notify('Ditolak: Anda sudah mengambil Izin Tidak Masuk bulan ini (Maksimal 1x/bulan).', 'error');
+                    return;
+                }
+            }
 
-            // Add typing indicator
-            const typingId = showTypingIndicator();
+            // 2. Build Payload
+            let detailParams = {
+                subTipe: '',
+                jadwal: '',
+                catatanSOP: ''
+            };
+
+            const tglStr = (id) => document.getElementById(id).value ? new Date(document.getElementById(id).value).toLocaleDateString('id-ID') : '';
+
+            if (cat === 'A') {
+                // Jam kembali kosong pada saat awal pengajuan
+                detailParams.jadwal = `Tanggal: ${tglStr('tgl_mulai')} | Jam Keluar: ${document.getElementById('jam_mulai').value}`;
+                detailParams.catatanSOP = 'Menunggu input Jam Kembali dari Pegawai';
+            } else if (cat === 'B') {
+                detailParams.jadwal = `${tglStr('tgl_mulai')} s/d ${tglStr('tgl_selesai')}`;
+                detailParams.catatanSOP = `Konsekuensi: Pemotongan Gaji`;
+            } else if (cat === 'C') {
+                const type = document.getElementById('tipe_sakit');
+                detailParams.subTipe = type.options[type.selectedIndex].text;
+                detailParams.jadwal = `${tglStr('tgl_mulai')} s/d ${tglStr('tgl_selesai')}`;
+                if (document.getElementById('file_surat').files.length > 0) {
+                    detailParams.catatanSOP = 'Telah melampirkan Surat Keterangan Dokter';
+                }
+            } else if (cat === 'D') {
+                const type = document.getElementById('tipe_terlambat');
+                detailParams.subTipe = type.options[type.selectedIndex].text;
+                detailParams.jadwal = `Tanggal: ${tglStr('tgl_mulai')} | Jam Tiba: ${document.getElementById('jam_mulai').value}`;
+            } else if (cat === 'E') {
+                const type = document.getElementById('tipe_cuti');
+                detailParams.subTipe = type.options[type.selectedIndex].text;
+                detailParams.jadwal = `${tglStr('tgl_mulai')} s/d ${tglStr('tgl_selesai')}`;
+            }
+
+            const newIzin = {
+                timestamp: now.toISOString(),
+                user: currentUser.username,
+                name: currentUser.name,
+                kategori: cat,
+                kategoriLabel: catDetails[cat].label,
+                subTipe: detailParams.subTipe,
+                jadwal: detailParams.jadwal,
+                keterangan: document.getElementById('keterangan').value,
+                catatanSOP: detailParams.catatanSOP,
+                submitDate: now.toLocaleString('id-ID'),
+                status: 'Menunggu Kepala Pondok',
+                alasanKepsek: '-',
+                jamSelesai: null // Digunakan untuk Kategori A
+            };
 
             try {
-                // Mengembalikan ke model gemini-2.5-flash-preview-09-2025 sesuai permintaan
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                // Push to Firebase
+                await addDoc(getColRef(), newIzin);
                 
-                // Context-aware prompt
-                const currentContext = sections[currentPage].title;
-                const pageContentText = document.getElementById(`page-${currentPage}`).innerText;
-                
-                const systemPrompt = `Kamu adalah asisten AI Fikih Haji yang ramah. Pengguna sedang mempelajari bagian: "${currentContext}". Jawab pertanyaan mereka dengan bahasa Indonesia yang jelas, ringkas, santun, dan sesuai pemahaman Ahlussunnah berlandaskan Hadits Jabir RA. Hindari memberikan informasi medis atau berbahaya.`;
-                
-                const payload = {
-                    contents: [{ parts: [{ text: question }] }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] }
-                };
-
-                const result = await fetchWithRetry(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const answerText = result.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, saya tidak dapat merespons saat ini. Silakan coba lagi.";
-                
-                removeElement(typingId);
-                appendMessage(answerText, 'ai');
-
+                // Reset form
+                e.target.reset();
+                document.getElementById('kategori_izin').value = "";
+                handleCategoryChange();
+                notify('Pengajuan berhasil dikirim ke Kepala Pondok.', 'success');
             } catch (error) {
-                console.error("Gemini API Error:", error);
-                removeElement(typingId);
-                // Menampilkan detail error di layar agar mudah diperbaiki
-                appendMessage(`Terjadi kesalahan: ${error.message}. Jika error API (403), pastikan API Key benar dan Domain GitHub sudah diizinkan di Google Cloud.`, 'error');
-            } finally {
-                inputField.disabled = false;
-                btnSend.disabled = false;
-                inputField.focus();
+                console.error("Gagal menambahkan izin: ", error);
+                notify('Terjadi kesalahan saat menyimpan data.', 'error');
             }
         }
 
-        function appendMessage(text, sender) {
-            const container = document.getElementById('chatMessages');
-            const msgDiv = document.createElement('div');
+        // Open Modal Jam Kembali (Kategori A)
+        function openModalJam(id) {
+            activeJamKembaliId = id;
+            document.getElementById('modal-jam').classList.remove('hidden');
+        }
+
+        function closeModalJam() {
+            document.getElementById('modal-jam').classList.add('hidden');
+            document.getElementById('input-jam-kembali').value = '';
+            activeJamKembaliId = null;
+        }
+
+        async function saveJamKembali() {
+            const time = document.getElementById('input-jam-kembali').value;
+            if (!time) {
+                notify("Harap masukkan jam kembali", "error");
+                return;
+            }
+
+            const item = izinData.find(d => d.id === activeJamKembaliId);
+            if(item) {
+                try {
+                    await updateDoc(getDocRef(activeJamKembaliId), {
+                        jamSelesai: time,
+                        jadwal: item.jadwal + ` | Jam Kembali: ${time}`,
+                        catatanSOP: 'Selesai (Telah lapor kembali ke sekolah)'
+                    });
+                    notify("Jam kembali berhasil dicatat.");
+                    closeModalJam();
+                } catch(error) {
+                    console.error("Gagal update jam: ", error);
+                    notify('Terjadi kesalahan saat menyimpan jam.', 'error');
+                }
+            }
+        }
+
+        // Action Approval Modals
+        function openModalAlasan(id, status) {
+            activeAlasanId = id;
+            activeAlasanStatus = status;
+            document.getElementById('modal-alasan-title').textContent = status === 'Disetujui' ? 'Setujui Izin' : 'Tolak Izin';
             
-            if (sender === 'user') {
-                msgDiv.className = 'flex items-start gap-3 justify-end';
-                msgDiv.innerHTML = `
-                    <div class="bg-emerald-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm text-sm max-w-[85%] leading-relaxed">
-                        ${escapeHTML(text)}
-                    </div>
-                `;
-            } else if (sender === 'ai' || sender === 'error') {
-                msgDiv.className = 'flex items-start gap-3';
-                const textClass = sender === 'error' ? 'text-red-500' : 'text-slate-700';
-                // Simple markdown-like formatting for bold text
-                let formattedText = escapeHTML(text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            const btn = document.getElementById('btn-submit-alasan');
+            if(status === 'Disetujui') {
+                btn.className = 'flex-1 py-3 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md';
+            } else {
+                btn.className = 'flex-1 py-3 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-md';
+            }
+            
+            document.getElementById('modal-alasan').classList.remove('hidden');
+        }
+
+        function closeModalAlasan() {
+            document.getElementById('modal-alasan').classList.add('hidden');
+            document.getElementById('input-alasan-kepsek').value = '';
+            activeAlasanId = null;
+            activeAlasanStatus = null;
+        }
+
+        async function submitAlasan() {
+            if (!activeAlasanId) return;
+            const alasan = document.getElementById('input-alasan-kepsek').value;
+            
+            try {
+                await updateDoc(getDocRef(activeAlasanId), {
+                    status: activeAlasanStatus,
+                    alasanKepsek: alasan || '-'
+                });
+                notify(`Izin telah ${activeAlasanStatus}`, activeAlasanStatus === 'Disetujui' ? 'success' : 'error');
+                closeModalAlasan();
+            } catch(error) {
+                console.error("Gagal update status: ", error);
+                notify("Terjadi kesalahan saat memperbarui status", "error");
+            }
+        }
+
+        // List Rendering
+        function renderList() {
+            const container = document.getElementById('main-list-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            let dataToShow = [];
+            if (currentUser.role === 'pegawai') {
+                dataToShow = izinData.filter(d => d.user === currentUser.username);
+            } else {
+                // Admin/Kepala sees all
+                dataToShow = izinData;
                 
-                msgDiv.innerHTML = `
-                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 text-xl">✨</div>
-                    <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm ${textClass} border border-slate-100 leading-relaxed max-w-[85%] whitespace-pre-wrap">
-                        ${formattedText}
+                // Update Admin Stats
+                const pendingCount = izinData.filter(d => d.status === 'Menunggu Kepala Pondok').length;
+                document.getElementById('stat-pending').textContent = pendingCount;
+                document.getElementById('stat-done').textContent = izinData.length - pendingCount;
+            }
+
+            if (dataToShow.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            container.innerHTML = dataToShow.map(item => createCardHTML(item)).join('');
+        }
+
+        function createCardHTML(item) {
+            const style = catDetails[item.kategori];
+            const isPending = item.status === 'Menunggu Kepala Pondok';
+            const isDisetujui = item.status === 'Disetujui';
+            
+            let statusBadge = '';
+            if(isPending) statusBadge = 'bg-amber-100 text-amber-700 animate-pulse border-amber-200';
+            else if(isDisetujui) statusBadge = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+            else statusBadge = 'bg-rose-100 text-rose-700 border-rose-200';
+
+            // Fitur Share Telegram (Muncul jika sudah disetujui / kapan saja untuk grup)
+            const textToShare = encodeURIComponent(`Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nMohon izin/maklumnya, saya mengabarkan:\nNama: ${item.name}\nIzin: ${item.kategoriLabel}\nWaktu: ${item.jadwal}\nAlasan: ${item.keterangan}\n\nStatus: ${item.status}. Terima kasih.`);
+            const telegramBtn = `
+                <a href="https://t.me/share/url?url=Sistem%20Perizinan%20Nurul%20Ilmi&text=${textToShare}" target="_blank" class="inline-flex items-center gap-1.5 text-[10px] font-bold text-sky-600 bg-sky-50 px-3 py-1.5 rounded-lg hover:bg-sky-100 transition-colors border border-sky-100">
+                    <i class="fab fa-telegram-plane"></i> Bagikan ke Grup
+                </a>
+            `;
+
+            // Tombol "Selesaikan Izin" untuk kategori A jika sudah disetujui tapi belum diisi
+            let actionBtnPegawai = '';
+            if (currentUser.role === 'pegawai' && item.kategori === 'A' && isDisetujui && !item.jamSelesai) {
+                actionBtnPegawai = `
+                    <button onclick="openModalJam('${item.id}')" class="inline-flex items-center gap-1.5 text-[10px] font-bold text-white bg-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                        <i class="fas fa-clock"></i> Selesaikan (Isi Jam Kembali)
+                    </button>
+                `;
+            }
+
+            // Catatan Kepala Pondok HTML
+            let alasanHTML = '';
+            if (item.alasanKepsek && item.alasanKepsek !== '-') {
+                alasanHTML = `
+                    <div class="mt-2 text-[10px] font-bold ${isDisetujui ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'} inline-block px-2 py-1 rounded">
+                        <i class="fas fa-comment-dots"></i> Catatan Pimpinan: ${item.alasanKepsek}
                     </div>
                 `;
             }
-            
-            container.appendChild(msgDiv);
-            scrollToBottom(container);
-        }
 
-        function showTypingIndicator() {
-            const container = document.getElementById('chatMessages');
-            const id = 'typing-' + Date.now();
-            const msgDiv = document.createElement('div');
-            msgDiv.id = id;
-            msgDiv.className = 'flex items-start gap-3 fade-in';
-            msgDiv.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 text-xl">✨</div>
-                <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-slate-100 typing-indicator flex items-center gap-1 h-10 px-4">
-                    <span></span><span></span><span></span>
+            // Admin Action Buttons
+            let adminActions = '';
+            if (currentUser.role === 'kepala' && isPending) {
+                adminActions = `
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex gap-3">
+                        <button onclick="openModalAlasan('${item.id}', 'Ditolak')" class="flex-1 py-2 rounded-xl text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white transition-colors border border-rose-100">
+                            Tolak
+                        </button>
+                        <button onclick="openModalAlasan('${item.id}', 'Disetujui')" class="flex-1 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md">
+                            Setujui
+                        </button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="card-entry glass p-5 rounded-3xl bg-white/70 relative">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg border ${style.color}">
+                                <i class="fas ${style.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-slate-800 text-sm">${currentUser.role === 'kepala' ? item.name : style.label}</h4>
+                                <p class="text-[10px] font-bold text-slate-400 mt-0.5">
+                                    ${currentUser.role === 'kepala' ? `[${item.kategori}] ${style.label}` : item.submitDate}
+                                </p>
+                            </div>
+                        </div>
+                        <span class="status-badge border ${statusBadge}">${item.status}</span>
+                    </div>
+
+                    <div class="bg-blue-50/50 rounded-2xl p-4 border border-blue-100/50 space-y-2">
+                        ${item.subTipe ? `<div class="text-xs font-bold text-blue-800">${item.subTipe}</div>` : ''}
+                        <div class="text-xs text-slate-600 font-medium flex gap-2">
+                            <i class="far fa-clock mt-0.5 text-blue-400"></i> ${item.jadwal}
+                        </div>
+                        <div class="text-xs text-slate-600 italic">"${item.keterangan}"</div>
+                        
+                        ${item.catatanSOP ? `
+                            <div class="mt-2 text-[10px] font-bold text-amber-600 uppercase tracking-wide bg-amber-50 inline-block px-2 py-1 rounded">
+                                <i class="fas fa-exclamation-circle"></i> ${item.catatanSOP}
+                            </div>
+                        ` : ''}
+                        
+                        ${alasanHTML}
+                    </div>
+                    
+                    <div class="mt-3 flex gap-2">
+                        ${telegramBtn}
+                        ${actionBtnPegawai}
+                    </div>
+
+                    ${adminActions}
                 </div>
             `;
-            container.appendChild(msgDiv);
-            scrollToBottom(container);
-            return id;
         }
 
-        function removeElement(id) {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-        }
+        // Attach functions to window scope for inline HTML handlers
+        window.handleLogin = handleLogin;
+        window.handleLogout = handleLogout;
+        window.handleCategoryChange = handleCategoryChange;
+        window.submitIzin = submitIzin;
+        window.checkSakitDates = checkSakitDates;
+        window.renderList = renderList;
+        window.openModalJam = openModalJam;
+        window.closeModalJam = closeModalJam;
+        window.saveJamKembali = saveJamKembali;
+        window.openModalAlasan = openModalAlasan;
+        window.closeModalAlasan = closeModalAlasan;
+        window.submitAlasan = submitAlasan;
 
-        function scrollToBottom(element) {
-            element.scrollTop = element.scrollHeight;
-        }
-
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, 
-                tag => ({
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    "'": '&#39;',
-                    '"': '&quot;'
-                }[tag] || tag)
-            );
-        }
+        window.onload = () => console.log("Sistem Perizinan Nurul Ilmi V4 (Firebase Sync) Ready.");
     </script>
 </body>
 </html>
