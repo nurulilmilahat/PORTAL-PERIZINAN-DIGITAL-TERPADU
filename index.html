@@ -6,6 +6,7 @@
     <title>PELITA - Ponpes Nurul Ilmi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
@@ -131,7 +132,48 @@
             </div>
         </div>
 
-        <!-- LOGIN VIEW -->
+        <!-- Custom Modal for Bulk Actions (Archive/Delete) -->
+        <div id="modal-bulk" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="glass w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border border-white text-center transform transition-all">
+                <div id="bulk-icon" class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto mb-4">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2" id="bulk-title">Konfirmasi Aksi</h3>
+                <p class="text-xs text-slate-500 mb-6" id="bulk-desc">Deskripsi aksi massal di sini.</p>
+                <div class="flex gap-2">
+                    <button onclick="closeBulkConfirm()" class="flex-1 py-3 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
+                    <button onclick="executeBulkAction()" id="btn-execute-bulk" class="flex-1 py-3 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-md">Ya, Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Modal for Excel Export -->
+        <div id="modal-export" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="glass w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border border-white transform transition-all">
+                <h3 class="text-lg font-bold text-blue-950 mb-2">Unduh Laporan Excel</h3>
+                <p class="text-xs text-slate-500 mb-4">Pilih periode pengajuan izin untuk diekspor ke Excel.</p>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Tgl Mulai</label>
+                            <input type="date" id="export-start" class="form-input mt-1 text-xs px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Tgl Selesai</label>
+                            <input type="date" id="export-end" class="form-input mt-1 text-xs px-3 py-2">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="closeModalExport()" class="flex-1 py-3 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
+                        <button onclick="downloadExcel()" class="flex-1 py-3 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md flex items-center justify-center gap-2">
+                            <i class="fas fa-file-excel"></i> Unduh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AUTH VIEW (LOGIN / REGISTER) -->
         <div id="view-login" class="flex flex-col items-center justify-center min-h-[85vh] animate-fade-in">
             <div class="w-full max-w-[400px]">
                 <div class="text-center mb-10">
@@ -158,7 +200,6 @@
                         </div>
                     </div>
                     
-                    <!-- Hierarki Judul Baru -->
                     <div class="inline-block bg-amber-50 border border-amber-200/60 px-4 py-1.5 rounded-full mb-3 shadow-sm">
                         <p class="text-amber-700 font-black uppercase tracking-[0.2em] text-[9px]">PONPES NURUL ILMI LAHAT</p>
                     </div>
@@ -167,32 +208,33 @@
                 </div>
 
                 <div class="glass p-8 md:p-10 rounded-[2.5rem] shadow-2xl shadow-blue-900/5">
-                    <form onsubmit="handleLogin(event)" class="space-y-6">
+                    <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-6">
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-slate-700 ml-1">Username</label>
+                            <label class="text-sm font-bold text-slate-700 ml-1">Email Anda</label>
                             <div class="relative">
-                                <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <input type="text" id="username" required class="form-input pl-11 bg-white/50" placeholder="ID Pegawai / Kepala">
+                                <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="email" id="email" required class="form-input pl-11 bg-white/50" placeholder="email@contoh.com">
                             </div>
                         </div>
                         <div class="space-y-2">
                             <label class="text-sm font-bold text-slate-700 ml-1">Password</label>
                             <div class="relative">
                                 <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <input type="password" id="password" class="form-input pl-11 bg-white/50" placeholder="••••••••">
+                                <input type="password" id="password" required class="form-input pl-11 pr-11 bg-white/50" placeholder="••••••••">
+                                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 focus:outline-none transition-colors">
+                                    <i class="fas fa-eye-slash" id="toggle-password-icon"></i>
+                                </button>
                             </div>
                         </div>
-                        <button type="submit" class="btn-primary w-full text-white font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-3 group">
+                        <button type="submit" id="btn-auth" class="btn-primary w-full text-white font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-3 group">
                             <span>Masuk Sistem</span>
                             <i class="fas fa-sign-in-alt text-xs group-hover:translate-x-1 transition-transform"></i>
                         </button>
                     </form>
-                    <div class="mt-8 pt-8 border-t border-slate-100 text-center">
-                        <p class="text-xs text-slate-400 font-semibold tracking-widest uppercase mb-3">Login Demo</p>
-                        <div class="flex justify-center gap-3">
-                            <button onclick="document.getElementById('username').value='pegawai'" class="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-colors">Pegawai</button>
-                            <button onclick="document.getElementById('username').value='kepala'" class="text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition-colors">Kepala Pondok</button>
-                        </div>
+                    <div class="mt-6 text-center">
+                        <button type="button" onclick="toggleAuthMode()" id="toggle-auth-btn" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors">
+                            Belum punya akun? Daftar di sini
+                        </button>
                     </div>
                 </div>
             </div>
@@ -213,6 +255,8 @@
                             <span id="display-role" class="text-[9px] font-black uppercase tracking-widest text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Role</span>
                             <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
                             <span class="text-[10px] text-slate-500 font-medium" id="current-date"></span>
+                            <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                            <span class="text-[10px] text-blue-600 font-bold tracking-wider" id="current-time"></span>
                         </div>
                     </div>
                 </div>
@@ -225,6 +269,40 @@
                 
                 <!-- LEFT COLUMN: Input Form -->
                 <div id="form-section" class="lg:col-span-5 space-y-6">
+                    
+                    <!-- PEGAWAI REKAPITULASI WIDGET -->
+                    <div id="pegawai-rekap-widget" class="hidden glass p-6 rounded-[2rem] shadow-xl border border-white animate-fade-in">
+                        <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                            <h3 class="text-sm font-extrabold text-blue-950 flex items-center gap-2">
+                                <i class="fas fa-chart-pie text-blue-600"></i> Rekapitulasi & Kehadiran
+                            </h3>
+                            <span class="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded-lg" id="rekap-periode"></span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div class="bg-sky-50/50 p-3 rounded-xl border border-sky-100">
+                                <div class="text-[9px] font-bold text-sky-600 uppercase tracking-wider mb-0.5">Keluar Area (A)</div>
+                                <div class="text-xl font-black text-sky-700" id="rekap-a">0j 0m</div>
+                            </div>
+                            <div id="card-rekap-b" class="bg-rose-50/50 p-3 rounded-xl border border-rose-100 transition-colors">
+                                <div class="text-[9px] font-bold text-rose-600 uppercase tracking-wider mb-0.5">Tidak Masuk (B)</div>
+                                <div class="text-xl font-black text-rose-700" id="rekap-b">0 <span class="text-[10px] font-bold text-rose-500">Hari</span></div>
+                            </div>
+                            <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
+                                <div class="text-[9px] font-bold text-emerald-600 uppercase tracking-wider mb-0.5">Sakit (C)</div>
+                                <div class="text-xl font-black text-emerald-700" id="rekap-c">0 <span class="text-[10px] font-bold text-emerald-500">Hari</span></div>
+                            </div>
+                            <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-100">
+                                <div class="text-[9px] font-bold text-amber-600 uppercase tracking-wider mb-0.5">Terlambat (D)</div>
+                                <div class="text-xl font-black text-amber-700" id="rekap-d">0 <span class="text-[10px] font-bold text-amber-500">Kali</span></div>
+                            </div>
+                            <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 col-span-2 md:col-span-1">
+                                <div class="text-[9px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">Cuti (E)</div>
+                                <div class="text-xl font-black text-indigo-700" id="rekap-e">0 <span class="text-[10px] font-bold text-indigo-500">Hari</span></div>
+                            </div>
+                        </div>
+                        <p class="text-[9px] text-slate-400 mt-3 flex items-center gap-1.5"><i class="fas fa-info-circle"></i> Akumulasi periode penggajian (Hanya yang disetujui).</p>
+                    </div>
+
                     <div class="glass p-6 md:p-8 rounded-[2rem] shadow-xl border border-white">
                         <div class="mb-6">
                             <h3 class="text-xl font-extrabold text-blue-950 flex items-center gap-2">
@@ -324,7 +402,6 @@
                                         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1" id="lbl_jam_mulai">Jam Keluar</label>
                                         <input type="time" id="jam_mulai" class="form-input text-sm">
                                     </div>
-                                    <!-- Jam selesai is handled via History Card button later for Category A -->
                                 </div>
 
                                 <!-- DYNAMIC: Konsekuensi (Untuk B) -->
@@ -377,12 +454,76 @@
 
                 <!-- RIGHT COLUMN: History/List -->
                 <div class="lg:col-span-7">
-                    <div class="glass p-6 md:p-8 rounded-[2.5rem] shadow-xl border border-white min-h-[600px]">
+                    <div class="glass p-6 md:p-8 rounded-[2.5rem] shadow-xl border border-white min-h-[600px] relative">
                         <div class="flex justify-between items-center mb-6">
                             <h3 id="list-title" class="text-xl font-extrabold text-blue-950">Data Pengajuan</h3>
-                            <button onclick="renderList()" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">
-                                <i class="fas fa-sync-alt text-xs"></i>
+                            <div class="flex gap-2 items-center">
+                                <button id="btn-export-excel" onclick="openModalExport()" class="hidden items-center justify-center h-8 px-3 bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors border border-emerald-200 text-xs font-bold gap-1.5 shadow-sm">
+                                    <i class="fas fa-file-excel"></i> <span class="hidden sm:inline">Unduh Excel</span>
+                                </button>
+                                <button onclick="renderList()" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">
+                                    <i class="fas fa-sync-alt text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- QUICK LOOK DASHBOARD FOR KEPALA -->
+                        <div id="quick-look-dashboard" class="hidden mb-6 flex-col gap-4 animate-fade-in">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="glass p-4 rounded-2xl border-l-4 border-amber-500 bg-amber-50/50">
+                                    <div class="text-[10px] font-black text-amber-600 uppercase tracking-wider mb-1">Menunggu Peninjauan</div>
+                                    <div class="text-3xl font-black text-amber-700" id="ql-pending">0</div>
+                                </div>
+                                <div class="glass p-4 rounded-2xl border-l-4 border-rose-500 bg-rose-50/50">
+                                    <div class="text-[10px] font-black text-rose-600 uppercase tracking-wider mb-1">Absen Penuh Hari Ini</div>
+                                    <div class="text-3xl font-black text-rose-700" id="ql-absen">0</div>
+                                    <div class="text-[9px] text-slate-500 mt-1 font-medium">Pegawai tidak di pondok</div>
+                                </div>
+                                <div class="glass p-4 rounded-2xl border-l-4 border-sky-500 bg-sky-50/50">
+                                    <div class="text-[10px] font-black text-sky-600 uppercase tracking-wider mb-1">Sedang Keluar Area</div>
+                                    <div class="text-3xl font-black text-sky-700" id="ql-keluar">0</div>
+                                    <div class="text-[9px] text-slate-500 mt-1 font-medium">Belum kembali (Kat. A)</div>
+                                </div>
+                            </div>
+                            <div class="glass p-4 rounded-2xl border border-slate-200 bg-white/50">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <i class="fas fa-exclamation-circle text-rose-500"></i>
+                                    <h4 class="text-xs font-black text-slate-700 uppercase tracking-wider">Peringatan Kedisiplinan (Bulan Ini)</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <div class="text-[10px] font-bold text-slate-500 mb-2 border-b border-slate-100 pb-1">Top 3 Izin Terbanyak</div>
+                                        <ul id="ql-top-izin" class="text-xs text-slate-600 space-y-1.5">
+                                            <!-- Injected via JS -->
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <div class="text-[10px] font-bold text-slate-500 mb-2 border-b border-slate-100 pb-1">Pengambil Izin B (Potong Gaji)</div>
+                                        <ul id="ql-alert-b" class="text-xs text-rose-600 font-medium space-y-1.5">
+                                            <!-- Injected via JS -->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AUTO-ARCHIVE TABS FOR KEPALA PONDOK -->
+                        <div id="kepala-tabs" class="hidden gap-6 mb-6 border-b border-blue-100">
+                            <button onclick="switchKepalaTab('aktif')" id="tab-aktif" class="pb-3 px-2 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-colors">
+                                Antrian Aktif <span id="badge-aktif" class="ml-1 bg-amber-100 text-amber-700 py-0.5 px-2 rounded-full text-[10px]">0</span>
                             </button>
+                            <button onclick="switchKepalaTab('riwayat')" id="tab-riwayat" class="pb-3 px-2 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors">
+                                Riwayat
+                            </button>
+                        </div>
+
+                        <!-- BULK HEADER FOR KEPALA (Hanya muncul di tab Riwayat) -->
+                        <div id="bulk-header" class="hidden justify-between items-center bg-blue-50/50 p-3 rounded-xl border border-blue-100 mb-4 animate-fade-in">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="check-all" onchange="toggleSelectAll(event)" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300">
+                                <span class="text-xs font-bold text-slate-600">Pilih Semua <span class="font-normal">(Data Periode Lalu)</span></span>
+                            </label>
+                            <span id="selected-count" class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded-full border border-blue-200">0 Terpilih</span>
                         </div>
 
                         <!-- Content List -->
@@ -401,90 +542,235 @@
                 </div>
             </main>
         </div>
+        
+        <!-- BULK ACTION FLOATING BAR -->
+        <div id="bulk-action-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+            <div class="glass px-6 py-4 rounded-full shadow-2xl shadow-blue-900/20 border border-white flex items-center gap-4 pointer-events-auto bg-white/90">
+                <span class="text-xs font-black text-slate-700 whitespace-nowrap"><span id="action-count" class="text-blue-600 text-sm">0</span> Terpilih</span>
+                <div class="w-px h-6 bg-slate-200"></div>
+                <button onclick="openBulkConfirm('archive')" class="px-4 py-2 bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-2">
+                    <i class="fas fa-archive"></i> Arsipkan
+                </button>
+                <button onclick="openBulkConfirm('delete')" class="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-2">
+                    <i class="fas fa-trash"></i> Hapus
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, getDoc, setDoc, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         // Firebase Setup
         const firebaseConfig = {
-            apiKey: "AIzaSyDbyfqeO1i3WC-Flxq9BN41zEW9maQsmd0",
-            authDomain: "perizinan-ppnil.firebaseapp.com",
-            projectId: "perizinan-ppnil",
-            storageBucket: "perizinan-ppnil.firebasestorage.app",
-            messagingSenderId: "976907019421",
-            appId: "1:976907019421:web:5e5499ba4c241aa73ba074",
-            measurementId: "G-42VNPBWFLV"
+            apiKey: "AIzaSyDwiuj3sE_TPNPjt3KMCsOOm6JvNI7wOqw",
+            authDomain: "pelita-2026.firebaseapp.com",
+            projectId: "pelita-2026",
+            storageBucket: "pelita-2026.firebasestorage.app",
+            messagingSenderId: "443014312329",
+            appId: "1:443014312329:web:e4e343ec6d04fd1b203158",
+            measurementId: "G-5G184MFF25"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Required paths following the environment security rules
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'perizinan-ppnil';
-        const getColRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'perizinan');
-        const getDocRef = (id) => doc(db, 'artifacts', appId, 'public', 'data', 'perizinan', id);
+        // Path Collections (Langsung mengarah ke Root Firebase Console Anda)
+        const getColRef = () => collection(db, 'perizinan');
+        const getDocRef = (id) => doc(db, 'perizinan', id);
 
         // Data State Management
         let currentUser = null;
+        let isLoginMode = true;
         let activeJamKembaliId = null;
         let activeAlasanId = null;
         let activeAlasanStatus = null;
         let izinData = [];
         let unsubscribe = null;
+        let clockInterval = null;
+        let activeKepalaTab = 'aktif'; // State untuk Auto-Archive Tabs
 
-        // Simulasi Akun
-        const users = {
-            'pegawai': { name: 'Ahmad Fauzi, S.Pd', role: 'pegawai' },
-            'kepala': { name: 'K.H. Dr. Ridwan', role: 'kepala' }
-        };
+        // Bulk Action State
+        let selectedItems = new Set();
+        let bulkActionType = '';
 
-        // Initialize Firebase Data Stream
-        const initFirebase = async () => {
-            try {
-                // Ensure proper authentication handling
+        // Tab Switcher Logic
+        function switchKepalaTab(tab) {
+            activeKepalaTab = tab;
+            selectedItems.clear(); // Hapus seleksi saat pindah tab agar bar hilang
+            updateBulkActionBar();
+            renderList();
+        }
+        window.switchKepalaTab = switchKepalaTab;
+
+        // Auth State Listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
                 try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
+                    // Ambil detail profil user dari database
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        currentUser = { uid: user.uid, email: user.email, ...userDoc.data() };
+                        document.getElementById('display-name').textContent = currentUser.name;
+                        document.getElementById('display-role').textContent = currentUser.role === 'kepala' ? 'Pimpinan/Kepala' : 'Pegawai';
+                        
+                        initDashboard();
+                        showView('view-dashboard');
                     } else {
-                        await signInAnonymously(auth);
+                        notify("Profil tidak ditemukan. Harap hubungi Admin.", "error");
+                        auth.signOut();
                     }
-                } catch (tokenError) {
-                    // Fallback jika token bawaan sistem bentrok dengan Config Firebase kustom Anda
-                    console.warn("Token mismatch terdeteksi, beralih ke Anonymous Sign-In.", tokenError);
-                    await signInAnonymously(auth);
+                } catch (error) {
+                    console.error("Gagal mengambil profil:", error);
                 }
+            } else {
+                currentUser = null;
+                showView('view-login');
+            }
+        });
 
-                unsubscribe = onSnapshot(getColRef(), (snapshot) => {
-                    izinData = [];
-                    snapshot.forEach((doc) => {
-                        izinData.push({ id: doc.id, ...doc.data() });
+        // Toggle antara Mode Login dan Mode Register
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            const btnAuth = document.getElementById('btn-auth');
+            const toggleBtn = document.getElementById('toggle-auth-btn');
+            
+            if (isLoginMode) {
+                btnAuth.innerHTML = `<span>Masuk Sistem</span><i class="fas fa-sign-in-alt text-xs group-hover:translate-x-1 transition-transform"></i>`;
+                toggleBtn.textContent = "Belum punya akun? Daftar di sini";
+            } else {
+                btnAuth.innerHTML = `<span>Daftar Sekarang</span><i class="fas fa-user-plus text-xs group-hover:scale-110 transition-transform"></i>`;
+                toggleBtn.textContent = "Sudah punya akun? Masuk di sini";
+            }
+        }
+        window.toggleAuthMode = toggleAuthMode;
+
+        // Toggle Password Visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggle-password-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            }
+        }
+        window.togglePasswordVisibility = togglePasswordVisibility;
+
+        // Auth Logic (Login & Pendaftaran Tertutup)
+        async function handleAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value.toLowerCase();
+            const password = document.getElementById('password').value;
+
+            if (isLoginMode) {
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    notify("Berhasil login!", "success");
+                } catch (error) {
+                    notify("Gagal login: Email atau password salah", "error");
+                }
+            } else {
+                // Mode Pendaftaran (Closed Registration - Pengecekan Whitelist)
+                try {
+                    // Cek apakah email terdaftar di whitelist
+                    const q = query(collection(db, "whitelist"), where("email", "==", email));
+                    const querySnapshot = await getDocs(q);
+
+                    if (querySnapshot.empty) {
+                        notify("Akses Ditolak: Email Anda belum terdaftar di sistem pusat Ponpes Nurul Ilmi. Silakan hubungi admin.", "error");
+                        return;
+                    }
+
+                    // Ambil data yang diizinkan
+                    const whitelistData = querySnapshot.docs[0].data();
+
+                    // Daftarkan akun Auth
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    // Buat profil pengguna di koleksi 'users'
+                    await setDoc(doc(db, "users", user.uid), {
+                        name: whitelistData.name,
+                        role: whitelistData.role,
+                        email: email
                     });
-                    // Sort by timestamp desc manually to comply with limitations
-                    izinData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                    if(currentUser) renderList();
-                }, (error) => {
-                    console.error("Firestore error:", error);
-                    notify("Gagal menyinkronkan data", "error");
-                });
-            } catch (error) {
-                console.error("Firebase Auth Error:", error);
-                if (error.code === 'auth/configuration-not-found') {
-                    const notif = document.getElementById('notification');
-                    const content = document.getElementById('notif-content');
-                    content.innerHTML = `<i class="fas fa-exclamation-triangle text-3xl"></i> <div><b>ERROR FIREBASE:</b><br><span class="text-xs font-normal">Harap aktifkan 'Anonymous' di menu Authentication -> Sign-in method pada Firebase Console Anda.</span></div>`;
-                    content.className = `px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 font-semibold text-white bg-rose-600 shadow-rose-500/40`;
-                    notif.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
-                    notif.classList.add('opacity-100', 'scale-100', 'translate-y-4');
-                } else {
-                    notify("Koneksi database gagal: " + error.message, "error");
+
+                    notify("Pendaftaran berhasil! Selamat datang.", "success");
+                } catch (error) {
+                    notify("Gagal mendaftar: " + error.message, "error");
                 }
             }
-        };
-        initFirebase();
+        }
+        window.handleAuth = handleAuth;
+
+        function handleLogout() {
+            if(unsubscribe) {
+                unsubscribe();
+                unsubscribe = null;
+            }
+            signOut(auth);
+            document.getElementById('kategori_izin').value = "";
+            handleCategoryChange(); // reset form
+        }
+        window.handleLogout = handleLogout;
+
+        // Dashboard Init & Sinkronisasi Data (ROW-LEVEL SECURITY IMPLEMENTATION)
+        function initDashboard() {
+            const today = new Date();
+            document.getElementById('current-date').textContent = today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+            // Jam Real-time
+            if (clockInterval) clearInterval(clockInterval);
+            const updateTime = () => {
+                document.getElementById('current-time').textContent = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            };
+            updateTime(); // set immediate
+            clockInterval = setInterval(updateTime, 1000);
+
+            // Pengaturan Query berdasarkan Peran (RLS Frontend Query)
+            let q;
+            if (currentUser.role === 'pegawai') {
+                document.getElementById('form-section').classList.remove('hidden');
+                document.getElementById('admin-widget').classList.add('hidden');
+                document.getElementById('list-title').textContent = 'Riwayat Pengajuan Saya';
+                document.getElementById('btn-export-excel').classList.add('hidden');
+                document.getElementById('btn-export-excel').classList.remove('flex');
+                // ROW-LEVEL SECURITY: Hanya fetch data miliknya sendiri
+                q = query(getColRef(), where("userUid", "==", currentUser.uid));
+            } else {
+                document.getElementById('form-section').classList.add('hidden');
+                document.getElementById('admin-widget').classList.remove('hidden');
+                document.getElementById('list-title').textContent = 'Manajemen Perizinan';
+                document.getElementById('btn-export-excel').classList.remove('hidden');
+                document.getElementById('btn-export-excel').classList.add('flex');
+                // Kepala Pondok bisa fetch semua data
+                q = getColRef();
+            }
+
+            // Realtime Listener
+            if (unsubscribe) unsubscribe();
+            unsubscribe = onSnapshot(q, (snapshot) => {
+                izinData = [];
+                snapshot.forEach((doc) => {
+                    izinData.push({ id: doc.id, ...doc.data() });
+                });
+                // Urutkan berdasarkan waktu terbaru
+                izinData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                renderList();
+            }, (error) => {
+                console.error("Firestore error:", error);
+                notify("Gagal menyinkronkan data", "error");
+            });
+        }
 
         // Kategori Map & Badge Colors
         const catDetails = {
@@ -525,47 +811,6 @@
             }, 5000);
         }
 
-        // Auth Logic
-        function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value.toLowerCase();
-            
-            if (users[username]) {
-                currentUser = { ...users[username], username };
-                document.getElementById('display-name').textContent = currentUser.name;
-                document.getElementById('display-role').textContent = currentUser.role === 'kepala' ? 'Pimpinan/Kepala' : 'Pegawai';
-                
-                initDashboard();
-                showView('view-dashboard');
-            } else {
-                notify('User tidak ditemukan!', 'error');
-            }
-        }
-
-        function handleLogout() {
-            currentUser = null;
-            document.getElementById('kategori_izin').value = "";
-            handleCategoryChange(); // reset form
-            showView('view-login');
-        }
-
-        // Dashboard Init
-        function initDashboard() {
-            const today = new Date();
-            document.getElementById('current-date').textContent = today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
-            if (currentUser.role === 'pegawai') {
-                document.getElementById('form-section').classList.remove('hidden');
-                document.getElementById('admin-widget').classList.add('hidden');
-                document.getElementById('list-title').textContent = 'Riwayat Pengajuan Saya';
-            } else {
-                document.getElementById('form-section').classList.add('hidden');
-                document.getElementById('admin-widget').classList.remove('hidden');
-                document.getElementById('list-title').textContent = 'Antrian Peninjauan Kepala Pondok';
-            }
-            renderList();
-        }
-
         // Form Logic (Dynamic Display based on Pedoman)
         function handleCategoryChange() {
             const cat = document.getElementById('kategori_izin').value;
@@ -596,7 +841,7 @@
                     break;
                 case 'B': // Tidak masuk
                     showFields(['tanggal', 'konsekuensi']);
-                    noticeText.innerHTML = "Hanya boleh 1x sebulan, maksimal 2 hari. Konsekuensi: Pemotongan Gaji otomatis.";
+                    noticeText.innerHTML = "Jumlah izin tidak masuk kantor maksimal 2 hari dalam sebulan.";
                     break;
                 case 'C': // Sakit
                     showFields(['tipe_sakit', 'tanggal']);
@@ -614,6 +859,7 @@
                     break;
             }
         }
+        window.handleCategoryChange = handleCategoryChange;
 
         function showFields(fieldList) {
             fieldList.forEach(f => {
@@ -634,11 +880,57 @@
             const uploadField = document.getElementById('field_surat_dokter');
             const fileInput = document.getElementById('file_surat');
             
-            if (t1 && t2) {
-                const diffTime = new Date(t2) - new Date(t1);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            if (t1) {
+                let isBerlanjut = false;
                 
-                if (diffDays > 1) {
+                // 1. Cek apakah rentang pengajuan saat ini > 1 hari
+                if (t2) {
+                    const diffTime = new Date(t2) - new Date(t1);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    if (diffDays > 1) {
+                        isBerlanjut = true;
+                    }
+                }
+                
+                // 2. Cek apakah ini kelanjutan dari izin sakit hari sebelumnya
+                if (!isBerlanjut && currentUser) {
+                    const t1Date = new Date(t1);
+                    t1Date.setHours(0,0,0,0);
+                    const yesterday = new Date(t1Date);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    
+                    const yyyy = yesterday.getFullYear();
+                    const mm = String(yesterday.getMonth() + 1).padStart(2, '0');
+                    const dd = String(yesterday.getDate()).padStart(2, '0');
+                    const yesterdayStr = `${yyyy}-${mm}-${dd}`;
+
+                    const previousSakit = izinData.find(d => {
+                        if (d.userUid === currentUser.uid && d.kategori === 'C' && d.status !== 'Ditolak') {
+                            if (d.rawEndDate === yesterdayStr) return true;
+                            // Fallback untuk data lama
+                            if (!d.rawEndDate && d.jadwal) {
+                                const parts = d.jadwal.split('s/d');
+                                if (parts.length === 2) {
+                                    const endDateStr = parts[1].trim();
+                                    const dParts = endDateStr.split('/');
+                                    if (dParts.length === 3) {
+                                        const day = dParts[0].padStart(2, '0');
+                                        const month = dParts[1].padStart(2, '0');
+                                        const year = dParts[2];
+                                        if (`${year}-${month}-${day}` === yesterdayStr) return true;
+                                    }
+                                }
+                            }
+                        }
+                        return false;
+                    });
+
+                    if (previousSakit) {
+                        isBerlanjut = true;
+                    }
+                }
+                
+                if (isBerlanjut) {
                     uploadField.classList.remove('hidden');
                     fileInput.required = true;
                 } else {
@@ -647,6 +939,7 @@
                 }
             }
         }
+        window.checkSakitDates = checkSakitDates;
 
         // Submit Form Logic
         async function submitIzin(e) {
@@ -656,28 +949,95 @@
             
             // 1. Validation Logic (SOP Rules)
             if (cat === 'B') {
-                const t1 = new Date(document.getElementById('tgl_mulai').value);
-                const t2 = new Date(document.getElementById('tgl_selesai').value);
-                const diffDays = Math.ceil(Math.abs(t2 - t1) / (1000 * 60 * 60 * 24)) + 1; 
+                const d1 = new Date(document.getElementById('tgl_mulai').value);
+                d1.setHours(0,0,0,0);
+                const d2 = new Date(document.getElementById('tgl_selesai').value);
+                d2.setHours(0,0,0,0);
                 
-                if (diffDays > 2) {
-                    notify('Ditolak: Izin Tidak Masuk maksimal 2 hari berturut-turut.', 'error');
+                // Menghitung jumlah hari yang diajukan saat ini dengan akurat
+                const currentRequestDays = Math.round(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)) + 1; 
+                
+                if (currentRequestDays > 2) {
+                    notify('Ditolak: Izin Tidak Masuk maksimal 2 hari.', 'error');
                     return;
                 }
 
-                // Cek kuota bulan ini (Max 1x)
+                // Cek akumulasi hari (Max 2 hari per bulan)
                 const currentMonth = now.getMonth();
                 const currentYear = now.getFullYear();
-                const countThisMonth = izinData.filter(d => 
-                    d.user === currentUser.username && 
-                    d.kategori === 'B' && 
-                    new Date(d.timestamp).getMonth() === currentMonth &&
-                    new Date(d.timestamp).getFullYear() === currentYear
-                ).length;
+                
+                let totalDaysTakenThisMonth = 0;
+                
+                izinData.forEach(d => {
+                    // Cek data izin 'B' bulan ini yang statusnya bukan Ditolak
+                    if (d.userUid === currentUser.uid && d.kategori === 'B' && d.status !== 'Ditolak') {
+                        const docDate = new Date(d.timestamp);
+                        if (docDate.getMonth() === currentMonth && docDate.getFullYear() === currentYear) {
+                            let pastD1 = null;
+                            let pastD2 = null;
+                            
+                            if (d.rawStartDate) {
+                                pastD1 = new Date(d.rawStartDate); pastD1.setHours(0,0,0,0);
+                                pastD2 = d.rawEndDate ? new Date(d.rawEndDate) : new Date(pastD1);
+                                pastD2.setHours(0,0,0,0);
+                            } else if (d.jadwal) {
+                                // Fallback untuk data lama
+                                const parts = d.jadwal.split('s/d');
+                                if (parts.length === 2) {
+                                    const m1 = parts[0].trim().split('/');
+                                    const m2 = parts[1].trim().split('/');
+                                    if (m1.length===3) { pastD1 = new Date(m1[2], m1[1]-1, m1[0]); pastD1.setHours(0,0,0,0); }
+                                    if (m2.length===3) { pastD2 = new Date(m2[2], m2[1]-1, m2[0]); pastD2.setHours(0,0,0,0); }
+                                }
+                            }
+                            
+                            let days = 1;
+                            if (pastD1 && pastD2) {
+                                days = Math.round(Math.abs(pastD2 - pastD1) / (1000 * 60 * 60 * 24)) + 1;
+                            }
+                            totalDaysTakenThisMonth += days;
+                        }
+                    }
+                });
 
-                if (countThisMonth >= 1) {
-                    notify('Ditolak: Anda sudah mengambil Izin Tidak Masuk bulan ini (Maksimal 1x/bulan).', 'error');
+                if ((totalDaysTakenThisMonth + currentRequestDays) > 2) {
+                    notify(`Ditolak: Kuota Izin Tidak Masuk Anda habis. (Terpakai: ${totalDaysTakenThisMonth} hari, Pengajuan ini: ${currentRequestDays} hari, Maks: 2 hari/bulan).`, 'error');
                     return;
+                }
+            }
+
+            // Validasi Limit Hari untuk Izin Cuti (Kategori E)
+            if (cat === 'E') {
+                const tipeCuti = document.getElementById('tipe_cuti').value;
+                const t1 = document.getElementById('tgl_mulai').value;
+                const t2 = document.getElementById('tgl_selesai').value;
+                
+                if (t1 && t2) {
+                    const d1 = new Date(t1);
+                    d1.setHours(0,0,0,0);
+                    const d2 = new Date(t2);
+                    d2.setHours(0,0,0,0);
+                    
+                    // Hitung durasi hari pengajuan
+                    const diffDays = Math.round(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+                    
+                    // Mapping batas maksimal hari berdasarkan jenis cuti
+                    let maxDays = 0;
+                    if (tipeCuti === 'Menikah (14 Hari)') maxDays = 14;
+                    else if (tipeCuti === 'Melahirkan - Suami (3 Hari)') maxDays = 3;
+                    else if (tipeCuti === 'Melahirkan - Istri (3 Bulan)') maxDays = 90; // Asumsi 3 bulan = 90 hari
+                    else if (tipeCuti === 'Istri/Anak Sakit (2 Hari)') maxDays = 2;
+                    else if (tipeCuti === 'Orang Tua Meninggal (7/14 Hari)') maxDays = 14; // Mengambil nilai maksimal
+                    else if (tipeCuti === 'Ujian Formal (7 Hari)') maxDays = 7;
+                    else if (tipeCuti === 'Berhaji') maxDays = 45; // Asumsi wajar masa haji 45 hari
+                    else if (tipeCuti === 'Umrah Pertama (14 Hari)') maxDays = 14;
+                    else if (tipeCuti === 'Umrah Ke-2 dst (14 Hari)') maxDays = 14;
+
+                    // Cek jika durasi melebihi batas
+                    if (maxDays > 0 && diffDays > maxDays) {
+                        notify(`Ditolak: Pengajuan cuti Anda (${diffDays} hari) melebihi batas maksimal ${maxDays} hari untuk jenis cuti ini.`, 'error');
+                        return; // Blokir proses submit (Berhenti di sini)
+                    }
                 }
             }
 
@@ -716,7 +1076,8 @@
 
             const newIzin = {
                 timestamp: now.toISOString(),
-                user: currentUser.username,
+                userUid: currentUser.uid, // IDENTITAS UNIK UNTUK ROW-LEVEL SECURITY
+                email: currentUser.email,
                 name: currentUser.name,
                 kategori: cat,
                 kategoriLabel: catDetails[cat].label,
@@ -727,12 +1088,16 @@
                 submitDate: now.toLocaleString('id-ID'),
                 status: 'Menunggu Kepala Pondok',
                 alasanKepsek: '-',
-                jamSelesai: null // Digunakan untuk Kategori A
+                jamSelesai: null, // Digunakan untuk Kategori A
+                jamMulai: cat === 'A' ? document.getElementById('jam_mulai').value : null, // Data bantuan untuk kalkulasi Excel
+                rawStartDate: document.getElementById('tgl_mulai').value || null,
+                rawEndDate: document.getElementById('tgl_selesai').value || null,
+                isArchived: false // Flag untuk arsip
             };
 
             try {
                 // Push to Firebase
-                await addDoc(getColRef(), newIzin);
+                await addDoc(collection(db, "perizinan"), newIzin);
                 
                 // Reset form
                 e.target.reset();
@@ -741,21 +1106,24 @@
                 notify('Pengajuan berhasil dikirim ke Kepala Pondok.', 'success');
             } catch (error) {
                 console.error("Gagal menambahkan izin: ", error);
-                notify('Terjadi kesalahan saat menyimpan data.', 'error');
+                notify('Terjadi kesalahan saat menyimpan data. Periksa koneksi Anda.', 'error');
             }
         }
+        window.submitIzin = submitIzin;
 
         // Open Modal Jam Kembali (Kategori A)
         function openModalJam(id) {
             activeJamKembaliId = id;
             document.getElementById('modal-jam').classList.remove('hidden');
         }
+        window.openModalJam = openModalJam;
 
         function closeModalJam() {
             document.getElementById('modal-jam').classList.add('hidden');
             document.getElementById('input-jam-kembali').value = '';
             activeJamKembaliId = null;
         }
+        window.closeModalJam = closeModalJam;
 
         async function saveJamKembali() {
             const time = document.getElementById('input-jam-kembali').value;
@@ -767,7 +1135,7 @@
             const item = izinData.find(d => d.id === activeJamKembaliId);
             if(item) {
                 try {
-                    await updateDoc(getDocRef(activeJamKembaliId), {
+                    await updateDoc(doc(db, "perizinan", activeJamKembaliId), {
                         jamSelesai: time,
                         jadwal: item.jadwal + ` | Jam Kembali: ${time}`,
                         catatanSOP: 'Selesai (Telah lapor kembali ke sekolah)'
@@ -776,10 +1144,11 @@
                     closeModalJam();
                 } catch(error) {
                     console.error("Gagal update jam: ", error);
-                    notify('Terjadi kesalahan saat menyimpan jam.', 'error');
+                    notify('Akses ditolak atau terjadi kesalahan sistem.', 'error');
                 }
             }
         }
+        window.saveJamKembali = saveJamKembali;
 
         // Action Approval Modals
         function openModalAlasan(id, status) {
@@ -796,6 +1165,7 @@
             
             document.getElementById('modal-alasan').classList.remove('hidden');
         }
+        window.openModalAlasan = openModalAlasan;
 
         function closeModalAlasan() {
             document.getElementById('modal-alasan').classList.add('hidden');
@@ -803,6 +1173,7 @@
             activeAlasanId = null;
             activeAlasanStatus = null;
         }
+        window.closeModalAlasan = closeModalAlasan;
 
         async function submitAlasan() {
             if (!activeAlasanId) return;
@@ -817,27 +1188,469 @@
                 closeModalAlasan();
             } catch(error) {
                 console.error("Gagal update status: ", error);
-                notify("Terjadi kesalahan saat memperbarui status", "error");
+                notify("Akses ditolak: Anda tidak memiliki hak akses ini.", "error");
             }
         }
+        window.submitAlasan = submitAlasan;
+
+        // --- BULK ACTIONS LOGIC (HAPUS & ARSIPKAN) ---
+        window.toggleSelection = function(id, event) {
+            if (event.target.checked) selectedItems.add(id);
+            else selectedItems.delete(id);
+            updateBulkActionBar();
+            checkSelectAllState();
+        }
+
+        window.toggleSelectAll = function(event) {
+            const isChecked = event.target.checked;
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = isChecked;
+                if (isChecked) selectedItems.add(cb.value);
+                else selectedItems.delete(cb.value);
+            });
+            updateBulkActionBar();
+        }
+
+        window.checkSelectAllState = function() {
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            const checkAllBtn = document.getElementById('check-all');
+            if (!checkAllBtn || checkboxes.length === 0) {
+                if(checkAllBtn) checkAllBtn.checked = false;
+                return;
+            }
+            
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+            
+            checkAllBtn.checked = allChecked;
+            checkAllBtn.indeterminate = someChecked && !allChecked;
+        }
+
+        window.updateBulkActionBar = function() {
+            const bar = document.getElementById('bulk-action-bar');
+            const countSpan1 = document.getElementById('action-count');
+            const countSpan2 = document.getElementById('selected-count');
+            
+            if(countSpan1) countSpan1.textContent = selectedItems.size;
+            if(countSpan2) countSpan2.textContent = `${selectedItems.size} Terpilih`;
+
+            if (selectedItems.size > 0) {
+                bar.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+                bar.classList.add('translate-y-0', 'opacity-100');
+            } else {
+                bar.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+                bar.classList.remove('translate-y-0', 'opacity-100');
+            }
+        }
+
+        window.openBulkConfirm = function(type) {
+            bulkActionType = type;
+            const title = document.getElementById('bulk-title');
+            const desc = document.getElementById('bulk-desc');
+            const icon = document.getElementById('bulk-icon');
+            const btn = document.getElementById('btn-execute-bulk');
+
+            if (type === 'archive') {
+                title.textContent = 'Arsipkan Data';
+                desc.textContent = `Anda akan mengarsipkan ${selectedItems.size} data pengajuan. Data tidak akan terhapus, tapi disembunyikan dari riwayat utama.`;
+                icon.innerHTML = '<i class="fas fa-archive"></i>';
+                icon.className = 'w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-3xl mx-auto mb-4';
+                btn.className = 'flex-1 py-3 rounded-xl text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 transition-colors shadow-md';
+                btn.textContent = 'Ya, Arsipkan';
+            } else {
+                title.textContent = 'Hapus Permanen';
+                desc.textContent = `Anda akan MENGHAPUS PERMANEN ${selectedItems.size} data pengajuan. Tindakan ini tidak bisa dibatalkan!`;
+                icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                icon.className = 'w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto mb-4';
+                btn.className = 'flex-1 py-3 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-md';
+                btn.textContent = 'Ya, Hapus';
+            }
+
+            document.getElementById('modal-bulk').classList.remove('hidden');
+        }
+
+        window.closeBulkConfirm = function() {
+            document.getElementById('modal-bulk').classList.add('hidden');
+            bulkActionType = '';
+        }
+
+        window.executeBulkAction = async function() {
+            const ids = Array.from(selectedItems);
+            if (ids.length === 0) return;
+
+            try {
+                if (bulkActionType === 'archive') {
+                    for (const id of ids) {
+                        await updateDoc(getDocRef(id), { isArchived: true });
+                    }
+                    notify(`${ids.length} data berhasil diarsipkan.`, 'success');
+                } else if (bulkActionType === 'delete') {
+                    for (const id of ids) {
+                        await deleteDoc(getDocRef(id));
+                    }
+                    notify(`${ids.length} data berhasil dihapus permanen.`, 'success');
+                }
+                
+                selectedItems.clear();
+                updateBulkActionBar();
+                closeBulkConfirm();
+                
+                const checkAllBtn = document.getElementById('check-all');
+                if(checkAllBtn) checkAllBtn.checked = false;
+
+            } catch (error) {
+                console.error("Bulk action error:", error);
+                if (error.code === 'permission-denied') {
+                    notify("Gagal menghapus! Pastikan Rules Firestore Anda mengizinkan aksi 'delete'.", "error");
+                } else {
+                    notify("Terjadi kesalahan sistem saat mengeksekusi.", "error");
+                }
+                closeBulkConfirm();
+            }
+        }
+        // --- END BULK ACTIONS LOGIC ---
+
+
+        // Fitur Export Excel (Hanya untuk Kepala)
+        function openModalExport() {
+            document.getElementById('modal-export').classList.remove('hidden');
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const firstDay = `${yyyy}-${mm}-01`;
+            const lastDay = new Date(yyyy, today.getMonth() + 1, 0).toISOString().split('T')[0];
+            document.getElementById('export-start').value = firstDay;
+            document.getElementById('export-end').value = lastDay;
+        }
+        window.openModalExport = openModalExport;
+
+        function closeModalExport() {
+            document.getElementById('modal-export').classList.add('hidden');
+        }
+        window.closeModalExport = closeModalExport;
+
+        function downloadExcel() {
+            const startVal = document.getElementById('export-start').value;
+            const endVal = document.getElementById('export-end').value;
+            if(!startVal || !endVal) {
+                notify("Pilih tanggal mulai dan selesai", "error");
+                return;
+            }
+
+            const startDate = new Date(startVal);
+            startDate.setHours(0,0,0,0);
+            const endDate = new Date(endVal);
+            endDate.setHours(23,59,59,999);
+
+            const filteredData = izinData.filter(d => {
+                const docDate = new Date(d.timestamp);
+                return docDate >= startDate && docDate <= endDate;
+            });
+
+            if (filteredData.length === 0) {
+                notify("Tidak ada data pengajuan pada periode ini", "error");
+                return;
+            }
+
+            const excelData = filteredData.map((d, index) => {
+                let konsekuensi = '-';
+                if (d.kategori === 'B') konsekuensi = 'Pemotongan Gaji';
+                else if (d.kategori === 'A') konsekuensi = 'Wajib Ganti Jam Kerja';
+
+                let durasiAktual = '-';
+                if (d.kategori === 'A' && d.jamSelesai) {
+                    let jMulai = d.jamMulai;
+                    // Fallback untuk data lama sebelum ada field jamMulai
+                    if (!jMulai) {
+                        const match = d.jadwal.match(/Jam Keluar: (\d{2}:\d{2})/);
+                        if (match) jMulai = match[1];
+                    }
+                    if (jMulai) {
+                        const [h1, m1] = jMulai.split(':').map(Number);
+                        const [h2, m2] = d.jamSelesai.split(':').map(Number);
+                        let durMenit = (h2 * 60 + m2) - (h1 * 60 + m1);
+                        if (durMenit < 0) durMenit += 24 * 60; // Antisipasi pergantian hari
+                        const dJam = Math.floor(durMenit / 60);
+                        const dMen = durMenit % 60;
+                        durasiAktual = dJam > 0 ? dJam + ' Jam ' + dMen + ' Menit' : dMen + ' Menit';
+                    }
+                }
+
+                return {
+                    "No": index + 1,
+                    "Tgl Pengajuan": d.submitDate,
+                    "Nama Pegawai": d.name,
+                    "Kategori Izin": d.kategoriLabel,
+                    "Sub-Kategori": d.subTipe || '-',
+                    "Jadwal Pengajuan": d.jadwal,
+                    "Jam Tiba (Khusus Kategori A)": d.jamSelesai || '-',
+                    "Durasi Meninggalkan Area": durasiAktual,
+                    "Alasan Pegawai": d.keterangan,
+                    "Status": d.status,
+                    "Catatan Pimpinan": d.alasanKepsek || '-',
+                    "Indikator Konsekuensi SOP": konsekuensi
+                };
+            });
+
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Rekap Izin");
+            XLSX.writeFile(wb, `Laporan_Perizinan_PELITA_${startVal}_sd_${endVal}.xlsx`);
+            
+            notify("Laporan Excel berhasil diunduh!", "success");
+            closeModalExport();
+        }
+        window.downloadExcel = downloadExcel;
 
         // List Rendering
         function renderList() {
             const container = document.getElementById('main-list-container');
             const emptyState = document.getElementById('empty-state');
+            const tabsContainer = document.getElementById('kepala-tabs');
+            const quickLookDashboard = document.getElementById('quick-look-dashboard');
+            const rekapWidget = document.getElementById('pegawai-rekap-widget');
+            const bulkHeader = document.getElementById('bulk-header');
             
-            let dataToShow = [];
-            if (currentUser.role === 'pegawai') {
-                dataToShow = izinData.filter(d => d.user === currentUser.username);
-            } else {
-                // Admin/Kepala sees all
-                dataToShow = izinData;
+            // Filter utama: HANYA tampilkan data yang belum diarsipkan (isArchived != true)
+            const activeDataFull = izinData.filter(d => !d.isArchived);
+            let dataToShow = activeDataFull; 
+
+            if (currentUser.role === 'kepala') {
+                tabsContainer.classList.remove('hidden');
+                tabsContainer.classList.add('flex');
+                quickLookDashboard.classList.remove('hidden');
+                quickLookDashboard.classList.add('flex');
+                if(rekapWidget) rekapWidget.classList.add('hidden');
+
+                // Pisahkan data Aktif dan Riwayat
+                const pendingData = activeDataFull.filter(d => d.status === 'Menunggu Kepala Pondok');
+                const historyData = activeDataFull.filter(d => d.status !== 'Menunggu Kepala Pondok');
+
+                // --- LOGIKA QUICK LOOK DASHBOARD ---
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const currentMonth = today.getMonth();
+                const currentYear = today.getFullYear();
                 
-                // Update Admin Stats
-                const pendingCount = izinData.filter(d => d.status === 'Menunggu Kepala Pondok').length;
+                let absenCount = 0;
+                let keluarCount = 0;
+                let userIzinBulanIni = {};
+                let userCatBBulanIni = new Set();
+
+                // Kita biarkan dashboard kalkulasi merekap dari activeDataFull
+                activeDataFull.forEach(d => {
+                    // Parse tanggal mulai dan selesai dari data
+                    let dStart = null;
+                    let dEnd = null;
+                    if (d.rawStartDate) {
+                        dStart = new Date(d.rawStartDate); dStart.setHours(0,0,0,0);
+                        dEnd = d.rawEndDate ? new Date(d.rawEndDate) : new Date(dStart); 
+                        dEnd.setHours(23,59,59,999);
+                    } else if (d.jadwal) {
+                        if (d.jadwal.includes('Tanggal:')) {
+                            const match = d.jadwal.match(/Tanggal:\s*(\d+)\/(\d+)\/(\d+)/);
+                            if (match) { 
+                                dStart = new Date(match[3], match[2]-1, match[1]); dStart.setHours(0,0,0,0); 
+                                dEnd = new Date(dStart); dEnd.setHours(23,59,59,999); 
+                            }
+                        } else if (d.jadwal.includes('s/d')) {
+                            const parts = d.jadwal.split('s/d');
+                            if (parts.length === 2) {
+                                const m1 = parts[0].trim().split('/');
+                                const m2 = parts[1].trim().split('/');
+                                if (m1.length===3) { dStart = new Date(m1[2], m1[1]-1, m1[0]); dStart.setHours(0,0,0,0); }
+                                if (m2.length===3) { dEnd = new Date(m2[2], m2[1]-1, m2[0]); dEnd.setHours(23,59,59,999); }
+                            }
+                        }
+                    }
+
+                    const docDate = new Date(d.timestamp);
+
+                    // 1. Absen Penuh Hari Ini
+                    if (d.status === 'Disetujui' && ['B', 'C', 'E'].includes(d.kategori)) {
+                        if (dStart && dEnd && today >= dStart && today <= dEnd) {
+                            absenCount++;
+                        }
+                    }
+
+                    // 2. Sedang Keluar Pondok
+                    if (d.status === 'Disetujui' && d.kategori === 'A' && !d.jamSelesai) {
+                        if (dStart && today.getTime() === dStart.getTime()) {
+                            keluarCount++;
+                        }
+                    }
+
+                    // 3. Peringatan Kedisiplinan Bulan Ini (Exclude Ditolak)
+                    if (d.status !== 'Ditolak' && docDate.getMonth() === currentMonth && docDate.getFullYear() === currentYear) {
+                        if (!userIzinBulanIni[d.name]) userIzinBulanIni[d.name] = 0;
+                        userIzinBulanIni[d.name]++;
+
+                        if (d.kategori === 'B') {
+                            userCatBBulanIni.add(d.name);
+                        }
+                    }
+                });
+
+                // Update UI Quick Look
+                document.getElementById('ql-pending').textContent = pendingData.length;
+                document.getElementById('ql-absen').textContent = absenCount;
+                document.getElementById('ql-keluar').textContent = keluarCount;
+
+                // Render Top 3
+                const topUsers = Object.entries(userIzinBulanIni).sort((a, b) => b[1] - a[1]).slice(0, 3);
+                const topListEl = document.getElementById('ql-top-izin');
+                if (topUsers.length > 0) {
+                    topListEl.innerHTML = topUsers.map((u, i) => `<li><span class="font-bold text-blue-600 mr-1">#${i+1}</span> ${u[0]} <span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-1.5 py-0.5 rounded-full ml-1">${u[1]}x</span></li>`).join('');
+                } else {
+                    topListEl.innerHTML = '<li class="text-slate-400 italic">Belum ada data izin bulan ini.</li>';
+                }
+
+                // Render Alert Kategori B
+                const alertBEl = document.getElementById('ql-alert-b');
+                if (userCatBBulanIni.size > 0) {
+                    alertBEl.innerHTML = Array.from(userCatBBulanIni).map(name => `<li><i class="fas fa-exclamation-triangle mr-1"></i> ${name}</li>`).join('');
+                } else {
+                    alertBEl.innerHTML = '<li class="text-emerald-500 italic"><i class="fas fa-check-circle mr-1"></i> Bersih, tidak ada yang mengambil izin B.</li>';
+                }
+                // --- END LOGIKA QUICK LOOK ---
+
+                // Perbarui jumlah statistik di widget dan badge
+                const pendingCount = pendingData.length;
                 document.getElementById('stat-pending').textContent = pendingCount;
-                document.getElementById('stat-done').textContent = izinData.length - pendingCount;
+                document.getElementById('stat-done').textContent = historyData.length;
+                document.getElementById('badge-aktif').textContent = pendingCount;
+
+                // Atur styling tab dan data yang ditampilkan berdasarkan status aktif
+                if (activeKepalaTab === 'aktif') {
+                    document.getElementById('tab-aktif').className = "pb-3 px-2 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-colors";
+                    document.getElementById('tab-riwayat').className = "pb-3 px-2 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors";
+                    dataToShow = pendingData;
+                    
+                    bulkHeader.classList.add('hidden');
+                    bulkHeader.classList.remove('flex');
+                } else {
+                    document.getElementById('tab-aktif').className = "pb-3 px-2 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors";
+                    document.getElementById('tab-riwayat').className = "pb-3 px-2 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-colors";
+                    dataToShow = historyData;
+
+                    bulkHeader.classList.remove('hidden');
+                    bulkHeader.classList.add('flex');
+                }
+            } else {
+                tabsContainer.classList.add('hidden');
+                tabsContainer.classList.remove('flex');
+                quickLookDashboard.classList.add('hidden');
+                quickLookDashboard.classList.remove('flex');
+                bulkHeader.classList.add('hidden');
+                bulkHeader.classList.remove('flex');
+
+                if(rekapWidget) {
+                    rekapWidget.classList.remove('hidden');
+                    
+                    const today = new Date();
+                    let startPeriod, endPeriod;
+                    if (today.getDate() > 25) {
+                        startPeriod = new Date(today.getFullYear(), today.getMonth(), 26);
+                        endPeriod = new Date(today.getFullYear(), today.getMonth() + 1, 25, 23, 59, 59, 999);
+                    } else {
+                        startPeriod = new Date(today.getFullYear(), today.getMonth() - 1, 26);
+                        endPeriod = new Date(today.getFullYear(), today.getMonth(), 25, 23, 59, 59, 999);
+                    }
+                    
+                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+                    document.getElementById('rekap-periode').textContent = `26 ${monthNames[startPeriod.getMonth()]} - 25 ${monthNames[endPeriod.getMonth()]}`;
+
+                    let countB = 0, countC = 0, countD = 0, countE = 0, durMenitA = 0;
+
+                    // Hitung rekap gaji pegawai dari SEMUA izinnya (termasuk yang mungkin sudah diarsipkan kepala)
+                    izinData.forEach(d => {
+                        if (d.userUid === currentUser.uid && d.status === 'Disetujui') {
+                            let dStart = null;
+                            let dEnd = null;
+                            if (d.rawStartDate) {
+                                dStart = new Date(d.rawStartDate); dStart.setHours(0,0,0,0);
+                                dEnd = d.rawEndDate ? new Date(d.rawEndDate) : new Date(dStart); 
+                                dEnd.setHours(23,59,59,999);
+                            } else if (d.jadwal) {
+                                if (d.jadwal.includes('Tanggal:')) {
+                                    const match = d.jadwal.match(/Tanggal:\s*(\d+)\/(\d+)\/(\d+)/);
+                                    if (match) { 
+                                        dStart = new Date(match[3], match[2]-1, match[1]); dStart.setHours(0,0,0,0); 
+                                        dEnd = new Date(dStart); dEnd.setHours(23,59,59,999); 
+                                    }
+                                } else if (d.jadwal.includes('s/d')) {
+                                    const parts = d.jadwal.split('s/d');
+                                    if (parts.length === 2) {
+                                        const m1 = parts[0].trim().split('/');
+                                        const m2 = parts[1].trim().split('/');
+                                        if (m1.length===3) { dStart = new Date(m1[2], m1[1]-1, m1[0]); dStart.setHours(0,0,0,0); }
+                                        if (m2.length===3) { dEnd = new Date(m2[2], m2[1]-1, m2[0]); dEnd.setHours(23,59,59,999); }
+                                    }
+                                }
+                            }
+                            
+                            if (dStart && dStart >= startPeriod && dStart <= endPeriod) {
+                                let days = 0;
+                                if(dEnd && dStart) {
+                                    const tStart = new Date(dStart.getFullYear(), dStart.getMonth(), dStart.getDate());
+                                    const tEnd = new Date(dEnd.getFullYear(), dEnd.getMonth(), dEnd.getDate());
+                                    days = Math.round((tEnd - tStart) / (1000 * 60 * 60 * 24)) + 1;
+                                } else {
+                                    days = 1;
+                                }
+
+                                if (d.kategori === 'B') countB += days;
+                                if (d.kategori === 'C') countC += days;
+                                if (d.kategori === 'D') countD += 1; // Menghitung frekuensi keterlambatan
+                                if (d.kategori === 'E') countE += days;
+                                
+                                if (d.kategori === 'A' && d.jamSelesai) {
+                                    let jMulai = d.jamMulai;
+                                    if (!jMulai) {
+                                        const match = d.jadwal.match(/Jam Keluar: (\d{2}:\d{2})/);
+                                        if (match) jMulai = match[1];
+                                    }
+                                    if (jMulai) {
+                                        const [h1, m1] = jMulai.split(':').map(Number);
+                                        const [h2, m2] = d.jamSelesai.split(':').map(Number);
+                                        let durMenit = (h2 * 60 + m2) - (h1 * 60 + m1);
+                                        if (durMenit < 0) durMenit += 24 * 60; 
+                                        durMenitA += durMenit;
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    const cardB = document.getElementById('card-rekap-b');
+                    document.getElementById('rekap-b').innerHTML = `${countB} <span class="text-[10px] font-bold text-rose-500">Hari</span>`;
+                    if(countB > 1) {
+                        cardB.classList.add('bg-rose-100', 'border-rose-300');
+                        cardB.classList.remove('bg-rose-50/50', 'border-rose-100');
+                    } else {
+                        cardB.classList.remove('bg-rose-100', 'border-rose-300');
+                        cardB.classList.add('bg-rose-50/50', 'border-rose-100');
+                    }
+
+                    document.getElementById('rekap-c').innerHTML = `${countC} <span class="text-[10px] font-bold text-emerald-500">Hari</span>`;
+                    document.getElementById('rekap-d').innerHTML = `${countD} <span class="text-[10px] font-bold text-amber-500">Kali</span>`;
+                    document.getElementById('rekap-e').innerHTML = `${countE} <span class="text-[10px] font-bold text-indigo-500">Hari</span>`;
+                    
+                    const aJam = Math.floor(durMenitA / 60);
+                    const aMenit = durMenitA % 60;
+                    document.getElementById('rekap-a').textContent = `${aJam}j ${aMenit}m`;
+                }
+                
+                dataToShow = activeDataFull.filter(d => d.userUid === currentUser.uid);
             }
+
+            // Pembersihan State Bulk (Mencegah Zombie IDs jika data sudah terhapus)
+            const currentRenderedIds = new Set(dataToShow.map(d => d.id));
+            for (const id of selectedItems) {
+                if (!currentRenderedIds.has(id)) selectedItems.delete(id);
+            }
+            updateBulkActionBar();
 
             if (dataToShow.length === 0) {
                 container.innerHTML = '';
@@ -847,7 +1660,11 @@
 
             emptyState.classList.add('hidden');
             container.innerHTML = dataToShow.map(item => createCardHTML(item)).join('');
+            
+            // Periksa state "check-all" setelah dirender
+            setTimeout(() => { checkSelectAllState(); }, 50);
         }
+        window.renderList = renderList;
 
         function createCardHTML(item) {
             const style = catDetails[item.kategori];
@@ -859,15 +1676,56 @@
             else if(isDisetujui) statusBadge = 'bg-emerald-100 text-emerald-700 border-emerald-200';
             else statusBadge = 'bg-rose-100 text-rose-700 border-rose-200';
 
-            // Fitur Share Telegram (Muncul jika sudah disetujui / kapan saja untuk grup)
-            const textToShare = encodeURIComponent(`Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\nMohon izin/maklumnya, saya mengabarkan:\nNama: ${item.name}\nIzin: ${item.kategoriLabel}\nWaktu: ${item.jadwal}\nAlasan: ${item.keterangan}\n\nStatus: ${item.status}. Terima kasih.`);
+            // Filter Tanggal untuk Bulk Actions Checkbox (hanya menampilkan data periode tutup buku lalu)
+            const todayDate = new Date();
+            let currentPeriodStartForCheck;
+            if (todayDate.getDate() > 25) {
+                currentPeriodStartForCheck = new Date(todayDate.getFullYear(), todayDate.getMonth(), 26);
+            } else {
+                currentPeriodStartForCheck = new Date(todayDate.getFullYear(), todayDate.getMonth() - 1, 26);
+            }
+            const isPastPeriod = new Date(item.timestamp) < currentPeriodStartForCheck;
+            
+            let rightSideHTML = `<span class="status-badge border ${statusBadge}">${item.status}</span>`;
+            
+            // Checkbox untuk Hapus/Arsip (Hanya di tab Riwayat Kepala Pondok & Melewati Tgl 25)
+            if (currentUser.role === 'kepala' && activeKepalaTab === 'riwayat' && isPastPeriod) {
+                const isChecked = selectedItems.has(item.id) ? 'checked' : '';
+                rightSideHTML = `
+                    <div class="flex items-center gap-3">
+                        ${rightSideHTML}
+                        <input type="checkbox" value="${item.id}" onchange="toggleSelection('${item.id}', event)" class="item-checkbox w-5 h-5 rounded text-blue-600 focus:ring-blue-500 border-slate-300 shadow-sm cursor-pointer" ${isChecked}>
+                    </div>
+                `;
+            }
+
+            // Fitur Share Telegram (Disesuaikan berdasarkan Role Pegawai / Pimpinan & Status)
+            let textToShareRaw = '';
+            const catatan = (item.alasanKepsek && item.alasanKepsek !== '-') ? item.alasanKepsek : '-';
+            const statusVal = item.status === 'Disetujui' ? 'DISETUJUI' : (item.status === 'Ditolak' ? 'DITOLAK' : 'PENDING');
+            
+            if (currentUser.role === 'pegawai') {
+                if (item.status === 'Menunggu Kepala Pondok') {
+                    // Pesan Saat Baru Mengajukan
+                    textToShareRaw = `PELITA - Nurul Ilmi\n\nAssalamu'alaikum Warahmatullahi Wabarakatuh.\n\nDengan hormat, saya bermaksud mengajukan permohonan izin sebagai berikut:\n\n👤 Nama: ${item.name}\n📝 Izin: ${item.kategoriLabel}\n📅 Waktu: ${item.jadwal}\n📌 Keperluan: ${item.keterangan}\n\nDemikian permohonan ini saya sampaikan. Atas perhatian dan kebijaksanaan Pimpinan Pondok, saya ucapkan jazakumullah khairan katsiran.`;
+                } else {
+                    // Pesan Saat Sudah Ditindaklanjuti (Disetujui/Ditolak)
+                    const iconStatus = item.status === 'Disetujui' ? '✅' : '❌';
+                    textToShareRaw = `PELITA - Nurul Ilmi\n\nAssalamu'alaikum Warahmatullahi Wabarakatuh.\n\nMenindaklanjuti permohonan izin yang saya ajukan, Pimpinan Pondok telah menetapkan keputusan sebagai berikut:\n\n${iconStatus} Status: ${statusVal}\n👤 Nama: ${item.name}\n📝 Jenis Izin: ${item.kategoriLabel}\n📅 Periode: ${item.jadwal}\n💬 Catatan Pimpinan: ${catatan}\n\n📢 Demikian informasi ini saya sampaikan kepada rekan-rekan melalui grup Telegram. Jazakumullahu khairan atas perhatian dan pengertiannya.`;
+                }
+            } else {
+                // Pesan Khusus Kepala Pondok
+                textToShareRaw = `PELITA - Nurul Ilmi\n\nAssalamu'alaikum Warahmatullahi Wabarakatuh.\n\nMenindaklanjuti permohonan izin yang diajukan, Pimpinan Pondok telah menetapkan keputusan sebagai berikut:\n\n👤 Nama: ${item.name}\n📝 Jenis: ${item.kategoriLabel}\n✅ Status Izin: ${statusVal}\n📅 Periode: ${item.jadwal}\n💬 Catatan Pimpinan: ${catatan}\n\nAtas perhatian dan kerjasama Saudara, kami ucapkan jazakumullah khairan katsiran.\n\nHormat kami, \nPimpinan Ponpes Nurul Ilmi Lahat.`;
+            }
+            const textToShare = encodeURIComponent(textToShareRaw);
+            
             const telegramBtn = `
                 <a href="https://t.me/share/url?url=Sistem%20Perizinan%20Nurul%20Ilmi&text=${textToShare}" target="_blank" class="inline-flex items-center gap-1.5 text-[10px] font-bold text-sky-600 bg-sky-50 px-3 py-1.5 rounded-lg hover:bg-sky-100 transition-colors border border-sky-100">
                     <i class="fab fa-telegram-plane"></i> Bagikan ke Grup
                 </a>
             `;
 
-            // Tombol "Selesaikan Izin" untuk kategori A jika sudah disetujui tapi belum diisi
+            // Tombol "Selesaikan Izin"
             let actionBtnPegawai = '';
             if (currentUser.role === 'pegawai' && item.kategori === 'A' && isDisetujui && !item.jamSelesai) {
                 actionBtnPegawai = `
@@ -877,7 +1735,7 @@
                 `;
             }
 
-            // Catatan Kepala Pondok HTML
+            // Catatan Kepala Pondok
             let alasanHTML = '';
             if (item.alasanKepsek && item.alasanKepsek !== '-') {
                 alasanHTML = `
@@ -885,6 +1743,27 @@
                         <i class="fas fa-comment-dots"></i> Catatan Pimpinan: ${item.alasanKepsek}
                     </div>
                 `;
+            }
+
+            // Badge Hitung Durasi Otomatis (Izin Keluar Jam Kerja)
+            let durationBadge = '';
+            if (item.kategori === 'A' && item.jamSelesai) {
+                let jMulai = item.jamMulai;
+                if (!jMulai) {
+                    const match = item.jadwal.match(/Jam Keluar: (\d{2}:\d{2})/);
+                    if (match) jMulai = match[1];
+                }
+                if (jMulai) {
+                    const [h1, m1] = jMulai.split(':').map(Number);
+                    const [h2, m2] = item.jamSelesai.split(':').map(Number);
+                    let durMenit = (h2 * 60 + m2) - (h1 * 60 + m1);
+                    if (durMenit < 0) durMenit += 24 * 60; // Antisipasi pergantian hari
+                    const dJam = Math.floor(durMenit / 60);
+                    const dMen = durMenit % 60;
+                    const teksDurasi = dJam > 0 ? dJam + " Jam " + dMen + " Menit" : dMen + " Menit";
+                    
+                    durationBadge = '<div class="mt-2 text-[10px] font-bold text-sky-700 bg-sky-50 inline-block px-2 py-1 rounded border border-sky-100"><i class="fas fa-stopwatch"></i> Durasi di luar: ' + teksDurasi + '</div>';
+                }
             }
 
             // Admin Action Buttons
@@ -916,7 +1795,7 @@
                                 </p>
                             </div>
                         </div>
-                        <span class="status-badge border ${statusBadge}">${item.status}</span>
+                        ${rightSideHTML}
                     </div>
 
                     <div class="bg-blue-50/50 rounded-2xl p-4 border border-blue-100/50 space-y-2">
@@ -933,6 +1812,7 @@
                         ` : ''}
                         
                         ${alasanHTML}
+                        ${durationBadge}
                     </div>
                     
                     <div class="mt-3 flex gap-2">
@@ -945,21 +1825,7 @@
             `;
         }
 
-        // Attach functions to window scope for inline HTML handlers
-        window.handleLogin = handleLogin;
-        window.handleLogout = handleLogout;
-        window.handleCategoryChange = handleCategoryChange;
-        window.submitIzin = submitIzin;
-        window.checkSakitDates = checkSakitDates;
-        window.renderList = renderList;
-        window.openModalJam = openModalJam;
-        window.closeModalJam = closeModalJam;
-        window.saveJamKembali = saveJamKembali;
-        window.openModalAlasan = openModalAlasan;
-        window.closeModalAlasan = closeModalAlasan;
-        window.submitAlasan = submitAlasan;
-
-        window.onload = () => console.log("Sistem Perizinan Nurul Ilmi V4 (Firebase Sync) Ready.");
+        console.log("PELITA V5 (Firebase Secured Auth) Ready.");
     </script>
 </body>
 </html>
