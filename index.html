@@ -132,6 +132,23 @@
             </div>
         </div>
 
+        <!-- Custom Modal Hapus Pengajuan Aktif -->
+        <div id="modal-delete-active" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="glass w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border border-white text-center transform transition-all">
+                <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto mb-4">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">Hapus Pengajuan?</h3>
+                <p id="delete-active-desc" class="text-xs text-slate-500 mb-6">Pengajuan akan dihapus permanen dan tidak dapat dikembalikan.</p>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeDeleteActiveModal()" class="flex-1 py-3 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
+                    <button type="button" onclick="confirmDeletePendingIzin()" id="btn-confirm-delete-active" class="flex-1 py-3 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-md">
+                        <i class="fas fa-trash-alt mr-1"></i> Ya, Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Custom Modal for Bulk Actions (Archive/Delete) -->
         <div id="modal-bulk" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
             <div class="glass w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border border-white text-center transform transition-all">
@@ -426,7 +443,7 @@
 
                             </div> <!-- End Dynamic -->
 
-                            <button type="submit" class="btn-primary w-full text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-blue-900/10 active:scale-[0.98]">
+                            <button type="submit" id="btn-submit-izin" class="btn-primary w-full text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-blue-900/10 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none">
                                 Ajukan ke Kepala Pondok
                             </button>
                         </form>
@@ -517,11 +534,26 @@
                             </button>
                         </div>
 
+                        <!-- FILTER PERIODE RIWAYAT (26 s.d. 25) -->
+                        <div id="history-period-filter" class="hidden mb-4 animate-fade-in">
+                            <div class="flex flex-col sm:flex-row sm:items-end gap-3 bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
+                                <div class="flex-1">
+                                    <label for="history-period-select" class="block text-[10px] font-black text-blue-900 uppercase tracking-wider mb-1.5">Periode Riwayat</label>
+                                    <select id="history-period-select" onchange="changeHistoryPeriod(this.value)" class="form-input text-xs py-2.5 bg-white cursor-pointer">
+                                        <option value="all">Semua Periode</option>
+                                    </select>
+                                </div>
+                                <div id="history-period-caption" class="text-[10px] font-bold text-blue-700 bg-white px-3 py-2.5 rounded-xl border border-blue-100 whitespace-nowrap">
+                                    Periode 26 - 25
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- BULK HEADER FOR KEPALA (Hanya muncul di tab Riwayat) -->
                         <div id="bulk-header" class="hidden justify-between items-center bg-blue-50/50 p-3 rounded-xl border border-blue-100 mb-4 animate-fade-in">
                             <label class="flex items-center gap-3 cursor-pointer">
                                 <input type="checkbox" id="check-all" onchange="toggleSelectAll(event)" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300">
-                                <span class="text-xs font-bold text-slate-600">Pilih Semua <span class="font-normal">(Data Periode Lalu)</span></span>
+                                <span class="text-xs font-bold text-slate-600">Pilih Semua <span class="font-normal">(Data Periode Terpilih)</span></span>
                             </label>
                             <span id="selected-count" class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded-full border border-blue-200">0 Terpilih</span>
                         </div>
@@ -593,6 +625,13 @@
         let unsubscribe = null;
         let clockInterval = null;
         let activeKepalaTab = 'aktif'; // State untuk Auto-Archive Tabs
+        let selectedHistoryPeriod = null; // Filter riwayat berdasarkan periode 26-25
+        let pendingDeleteActiveId = null; // ID pengajuan Antrian Aktif yang akan dihapus
+
+        // Anti double-submit: mencegah satu pengajuan terkirim dua kali saat tombol ditekan berulang
+        let isSubmittingIzin = false;
+        let lastSubmissionFingerprint = null;
+        let lastSubmissionAt = 0;
 
         // Bulk Action State
         let selectedItems = new Set();
@@ -606,6 +645,92 @@
             renderList();
         }
         window.switchKepalaTab = switchKepalaTab;
+
+        // --- FILTER RIWAYAT PERIODE 26 s.d. 25 ---
+        function getIzinReferenceDate(item) {
+            if (item.rawStartDate) {
+                const d = new Date(item.rawStartDate + 'T00:00:00');
+                if (!isNaN(d)) return d;
+            }
+
+            if (item.jadwal) {
+                const matchTanggal = item.jadwal.match(/Tanggal:\s*(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                if (matchTanggal) {
+                    return new Date(Number(matchTanggal[3]), Number(matchTanggal[2]) - 1, Number(matchTanggal[1]));
+                }
+
+                const matchRentang = item.jadwal.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                if (matchRentang) {
+                    return new Date(Number(matchRentang[3]), Number(matchRentang[2]) - 1, Number(matchRentang[1]));
+                }
+            }
+
+            const fallback = new Date(item.timestamp);
+            return isNaN(fallback) ? new Date() : fallback;
+        }
+
+        function getPeriodInfo(dateInput) {
+            const d = new Date(dateInput);
+            d.setHours(0, 0, 0, 0);
+
+            let start, end;
+            if (d.getDate() >= 26) {
+                start = new Date(d.getFullYear(), d.getMonth(), 26);
+                end = new Date(d.getFullYear(), d.getMonth() + 1, 25, 23, 59, 59, 999);
+            } else {
+                start = new Date(d.getFullYear(), d.getMonth() - 1, 26);
+                end = new Date(d.getFullYear(), d.getMonth(), 25, 23, 59, 59, 999);
+            }
+
+            const key = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
+            const fmt = (x) => x.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+            return { key, start, end, label: `${fmt(start)} – ${fmt(end)}` };
+        }
+
+        function populateHistoryPeriodOptions(historyData) {
+            const select = document.getElementById('history-period-select');
+            const caption = document.getElementById('history-period-caption');
+            if (!select || !caption) return;
+
+            const periods = new Map();
+            historyData.forEach(item => {
+                const info = getPeriodInfo(getIzinReferenceDate(item));
+                periods.set(info.key, info);
+            });
+
+            const currentInfo = getPeriodInfo(new Date());
+            if (!periods.has(currentInfo.key)) periods.set(currentInfo.key, currentInfo);
+
+            const sorted = Array.from(periods.values()).sort((a, b) => b.start - a.start);
+
+            if (selectedHistoryPeriod === null) {
+                selectedHistoryPeriod = currentInfo.key;
+            }
+            if (selectedHistoryPeriod !== 'all' && !periods.has(selectedHistoryPeriod)) {
+                selectedHistoryPeriod = sorted.length ? sorted[0].key : 'all';
+            }
+
+            select.innerHTML = '<option value="all">Semua Periode</option>' + sorted.map(info =>
+                `<option value="${info.key}">${info.label}</option>`
+            ).join('');
+            select.value = selectedHistoryPeriod;
+
+            if (selectedHistoryPeriod === 'all') {
+                caption.textContent = 'Menampilkan semua periode';
+            } else {
+                const info = periods.get(selectedHistoryPeriod);
+                caption.textContent = info ? `Periode ${info.label}` : 'Periode 26 - 25';
+            }
+        }
+
+        function changeHistoryPeriod(value) {
+            selectedHistoryPeriod = value;
+            selectedItems.clear();
+            updateBulkActionBar();
+            renderList();
+        }
+        window.changeHistoryPeriod = changeHistoryPeriod;
+        // --- END FILTER RIWAYAT PERIODE ---
 
         // Auth State Listener
         onAuthStateChanged(auth, async (user) => {
@@ -941,6 +1066,104 @@
         }
         window.checkSakitDates = checkSakitDates;
 
+        // Kompres lampiran surat dokter untuk disimpan langsung di Firestore.
+        // Canvas juga menghapus metadata EXIF foto dan mengubah hasil menjadi JPEG yang lebih ringan.
+        async function compressSuratDokter(file) {
+            const TARGET_BYTES = 430 * 1024; // target file JPEG sebelum Base64 (~573 KB setelah Base64)
+            const MAX_ATTEMPTS = 7;
+
+            const loadImage = () => new Promise((resolve, reject) => {
+                const img = new Image();
+                const objectUrl = URL.createObjectURL(file);
+                img.onload = () => {
+                    URL.revokeObjectURL(objectUrl);
+                    resolve(img);
+                };
+                img.onerror = () => {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error('LAMPIRAN_Foto surat dokter tidak dapat dibaca. Gunakan format JPG, PNG, atau WEBP.'));
+                };
+                img.src = objectUrl;
+            });
+
+            const image = await loadImage();
+            let maxDimension = 1500;
+            let quality = 0.76;
+            let lastResult = null;
+
+            for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+                const originalW = image.naturalWidth || image.width;
+                const originalH = image.naturalHeight || image.height;
+                const scale = Math.min(1, maxDimension / Math.max(originalW, originalH));
+                const width = Math.max(1, Math.round(originalW * scale));
+                const height = Math.max(1, Math.round(originalH * scale));
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d', { alpha: false });
+                if (!ctx) throw new Error('LAMPIRAN_Perangkat tidak dapat memproses gambar lampiran.');
+
+                // Latar putih membantu hasil PNG/transparan tetap terbaca saat dikonversi ke JPEG.
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, width, height);
+                ctx.drawImage(image, 0, 0, width, height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                const base64Part = dataUrl.split(',')[1] || '';
+                const bytes = Math.ceil(base64Part.length * 3 / 4);
+                lastResult = { dataUrl, bytes, mime: 'image/jpeg', width, height };
+
+                if (bytes <= TARGET_BYTES) return lastResult;
+
+                maxDimension = Math.max(760, Math.round(maxDimension * 0.84));
+                quality = Math.max(0.46, quality - 0.07);
+            }
+
+            if (lastResult && lastResult.bytes <= 520 * 1024) return lastResult;
+            throw new Error('LAMPIRAN_Foto masih terlalu besar setelah dikompres. Silakan foto ulang dengan resolusi lebih rendah.');
+        }
+
+        // Buka lampiran Firestore pada tab baru tanpa Firebase Storage.
+        // Tetap mendukung surat lama yang mungkin sudah memiliki suratDokterUrl.
+        function openSuratDokter(izinId) {
+            const item = izinData.find(d => d.id === izinId);
+            if (!item) return notify('Data izin tidak ditemukan.', 'error');
+
+            if (item.suratDokterData) {
+                try {
+                    const parts = item.suratDokterData.split(',');
+                    const mimeMatch = (parts[0] || '').match(/data:([^;]+);base64/);
+                    const mime = mimeMatch ? mimeMatch[1] : (item.suratDokterMime || 'image/jpeg');
+                    const binary = atob(parts[1] || '');
+                    const bytes = new Uint8Array(binary.length);
+                    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+                    const blob = new Blob([bytes], { type: mime });
+                    const url = URL.createObjectURL(blob);
+                    const opened = window.open(url, '_blank', 'noopener,noreferrer');
+                    if (!opened) {
+                        URL.revokeObjectURL(url);
+                        notify('Browser memblokir tab lampiran. Izinkan pop-up untuk membuka surat dokter.', 'error');
+                        return;
+                    }
+                    setTimeout(() => URL.revokeObjectURL(url), 60000);
+                    return;
+                } catch (error) {
+                    console.error('Gagal membuka lampiran Firestore:', error);
+                    notify('Lampiran surat dokter tidak dapat dibuka.', 'error');
+                    return;
+                }
+            }
+
+            if (item.suratDokterUrl) {
+                window.open(item.suratDokterUrl, '_blank', 'noopener,noreferrer');
+                return;
+            }
+
+            notify('Lampiran surat dokter tidak tersedia.', 'error');
+        }
+        window.openSuratDokter = openSuratDokter;
+
         // Submit Form Logic
         async function submitIzin(e) {
             e.preventDefault();
@@ -1085,6 +1308,12 @@
                 jadwal: detailParams.jadwal,
                 keterangan: document.getElementById('keterangan').value,
                 catatanSOP: detailParams.catatanSOP,
+                // Lampiran surat dokter disimpan langsung di Firestore setelah
+                // dikompres otomatis di browser agar tetap di bawah batas ukuran dokumen.
+                suratDokterData: null,
+                suratDokterNama: null,
+                suratDokterMime: null,
+                suratDokterUkuran: null,
                 submitDate: now.toLocaleString('id-ID'),
                 status: 'Menunggu Kepala Pondok',
                 alasanKepsek: '-',
@@ -1095,9 +1324,80 @@
                 isArchived: false // Flag untuk arsip
             };
 
+            // Ambil lampiran surat dokter (jika ada). File akan dikompres di browser
+            // lalu disimpan langsung di dokumen Firestore, tanpa Firebase Storage.
+            const suratDokterFile = (cat === 'C') ? document.getElementById('file_surat').files[0] : null;
+            if (suratDokterFile) {
+                if (!suratDokterFile.type.startsWith('image/')) {
+                    notify('Lampiran surat dokter harus berupa gambar.', 'error');
+                    return;
+                }
+                // Batas file sumber untuk menjaga memori browser, bukan batas hasil akhir.
+                if (suratDokterFile.size > 12 * 1024 * 1024) {
+                    notify('Ukuran foto asli terlalu besar. Maksimal 12 MB.', 'error');
+                    return;
+                }
+            }
+
+            // --- PROTEKSI ANTI PENGAJUAN DOBEL ---
+            // Fingerprint hanya dipakai sebagai lapisan tambahan untuk menolak pengajuan identik
+            // yang terkirim lagi dalam beberapa detik (mis. double-tap / jaringan lambat).
+            const submissionFingerprint = JSON.stringify({
+                userUid: newIzin.userUid,
+                kategori: newIzin.kategori,
+                subTipe: newIzin.subTipe,
+                jadwal: newIzin.jadwal,
+                keterangan: (newIzin.keterangan || '').trim().replace(/\s+/g, ' '),
+                rawStartDate: newIzin.rawStartDate,
+                rawEndDate: newIzin.rawEndDate,
+                jamMulai: newIzin.jamMulai
+            });
+
+            const submitBtn = document.getElementById('btn-submit-izin');
+            const originalSubmitHtml = submitBtn ? submitBtn.innerHTML : 'Ajukan ke Kepala Pondok';
+            const DUPLICATE_WINDOW_MS = 15000; // 15 detik
+
+            // Jika proses penyimpanan pertama masih berlangsung, abaikan submit berikutnya.
+            if (isSubmittingIzin) {
+                notify('Pengajuan sedang dikirim. Mohon tunggu sebentar.', 'info');
+                return;
+            }
+
+            // Jika pengajuan yang sama persis baru saja berhasil dikirim, jangan kirim lagi.
+            if (lastSubmissionFingerprint === submissionFingerprint && (Date.now() - lastSubmissionAt) < DUPLICATE_WINDOW_MS) {
+                notify('Pengajuan yang sama baru saja dikirim. Sistem mencegah pengiriman ganda.', 'info');
+                return;
+            }
+
+            isSubmittingIzin = true;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i><span>Mengirim Pengajuan...</span>';
+            }
+
             try {
-                // Push to Firebase
+                // Jika ada surat dokter, kompres lalu simpan langsung di Firestore.
+                // Target hasil kompresi dibuat cukup kecil agar aman terhadap batas ±1 MiB/dokumen Firestore.
+                if (suratDokterFile) {
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i><span>Memproses Lampiran...</span>';
+                    }
+                    const hasilKompresi = await compressSuratDokter(suratDokterFile);
+                    newIzin.suratDokterData = hasilKompresi.dataUrl;
+                    newIzin.suratDokterNama = suratDokterFile.name;
+                    newIzin.suratDokterMime = hasilKompresi.mime;
+                    newIzin.suratDokterUkuran = hasilKompresi.bytes;
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i><span>Mengirim Pengajuan...</span>';
+                    }
+                }
+
+                // Push ke Firebase hanya sekali selama lock aktif
                 await addDoc(collection(db, "perizinan"), newIzin);
+
+                // Catat fingerprint hanya setelah Firestore benar-benar berhasil menyimpan
+                lastSubmissionFingerprint = submissionFingerprint;
+                lastSubmissionAt = Date.now();
                 
                 // Reset form
                 e.target.reset();
@@ -1106,7 +1406,20 @@
                 notify('Pengajuan berhasil dikirim ke Kepala Pondok.', 'success');
             } catch (error) {
                 console.error("Gagal menambahkan izin: ", error);
-                notify('Terjadi kesalahan saat menyimpan data. Periksa koneksi Anda.', 'error');
+                if (error && String(error.message || '').includes('LAMPIRAN_')) {
+                    notify(error.message.replace('LAMPIRAN_', ''), 'error');
+                } else if (error && (error.code === 'resource-exhausted' || error.code === 'invalid-argument')) {
+                    notify('Lampiran masih terlalu besar untuk Firestore. Coba foto ulang dengan resolusi lebih rendah.', 'error');
+                } else {
+                    notify('Terjadi kesalahan saat menyimpan data. Periksa koneksi Anda.', 'error');
+                }
+            } finally {
+                // Selalu buka kembali tombol, termasuk jika terjadi error jaringan
+                isSubmittingIzin = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalSubmitHtml;
+                }
             }
         }
         window.submitIzin = submitIzin;
@@ -1253,14 +1566,14 @@
 
             if (type === 'archive') {
                 title.textContent = 'Arsipkan Data';
-                desc.textContent = `Anda akan mengarsipkan ${selectedItems.size} data pengajuan. Data tidak akan terhapus, tapi disembunyikan dari riwayat utama.`;
+                desc.textContent = `Anda akan mengarsipkan ${selectedItems.size} data pengajuan yang dipilih pada riwayat. Data tidak akan terhapus, tetapi disembunyikan dari riwayat utama.`;
                 icon.innerHTML = '<i class="fas fa-archive"></i>';
                 icon.className = 'w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-3xl mx-auto mb-4';
                 btn.className = 'flex-1 py-3 rounded-xl text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 transition-colors shadow-md';
                 btn.textContent = 'Ya, Arsipkan';
             } else {
                 title.textContent = 'Hapus Permanen';
-                desc.textContent = `Anda akan MENGHAPUS PERMANEN ${selectedItems.size} data pengajuan. Tindakan ini tidak bisa dibatalkan!`;
+                desc.textContent = `Anda akan MENGHAPUS PERMANEN ${selectedItems.size} data pengajuan yang dipilih pada riwayat. Tindakan ini tidak bisa dibatalkan!`;
                 icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
                 icon.className = 'w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto mb-4';
                 btn.className = 'flex-1 py-3 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-md';
@@ -1310,6 +1623,87 @@
             }
         }
         // --- END BULK ACTIONS LOGIC ---
+
+        // Hapus satu pengajuan yang masih berada di Antrian Aktif (khusus Kepala Pondok)
+        // Menggunakan modal aplikasi, bukan window.confirm, agar stabil di browser/hosting yang membatasi dialog native.
+        window.deletePendingIzin = function(id) {
+            const item = izinData.find(d => d.id === id);
+            if (!item) {
+                notify('Pengajuan tidak ditemukan atau sudah terhapus.', 'error');
+                return;
+            }
+            if (!currentUser || currentUser.role !== 'kepala') {
+                notify('Hanya Kepala Pondok yang dapat menghapus pengajuan.', 'error');
+                return;
+            }
+            if (item.status !== 'Menunggu Kepala Pondok') {
+                notify('Hanya pengajuan di Antrian Aktif yang dapat dihapus dari tombol ini.', 'error');
+                return;
+            }
+
+            pendingDeleteActiveId = id;
+            const nama = item.name || 'pegawai';
+            const jenis = item.kategoriLabel || 'pengajuan izin';
+            const desc = document.getElementById('delete-active-desc');
+            if (desc) {
+                desc.textContent = `Pengajuan ${jenis} dari ${nama} akan dihapus permanen dan tidak dapat dikembalikan.`;
+            }
+            document.getElementById('modal-delete-active').classList.remove('hidden');
+        };
+
+        window.closeDeleteActiveModal = function() {
+            document.getElementById('modal-delete-active').classList.add('hidden');
+            pendingDeleteActiveId = null;
+            const btn = document.getElementById('btn-confirm-delete-active');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-trash-alt mr-1"></i> Ya, Hapus';
+            }
+        };
+
+        window.confirmDeletePendingIzin = async function() {
+            const id = pendingDeleteActiveId;
+            if (!id) {
+                notify('Pengajuan yang akan dihapus tidak ditemukan.', 'error');
+                return;
+            }
+
+            const item = izinData.find(d => d.id === id);
+            if (!item || item.status !== 'Menunggu Kepala Pondok') {
+                closeDeleteActiveModal();
+                notify('Pengajuan sudah berubah atau tidak lagi berada di Antrian Aktif.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btn-confirm-delete-active');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-1"></i> Menghapus...';
+            }
+
+            try {
+                await deleteDoc(doc(db, 'perizinan', id));
+
+                // Hapus dari state lokal segera agar kartu langsung hilang tanpa menunggu snapshot realtime.
+                izinData = izinData.filter(d => d.id !== id);
+                closeDeleteActiveModal();
+                renderList();
+                notify('Pengajuan berhasil dihapus dari Antrian Aktif.', 'success');
+            } catch (error) {
+                console.error('Gagal menghapus pengajuan aktif:', error);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-trash-alt mr-1"></i> Ya, Hapus';
+                }
+
+                if (error.code === 'permission-denied') {
+                    notify("Akses hapus ditolak Firestore. Pastikan akun ini ber-role 'kepala' dan Rules sudah dipublish.", 'error');
+                } else {
+                    notify(`Gagal menghapus pengajuan${error.code ? ' (' + error.code + ')' : ''}.`, 'error');
+                }
+            }
+        };
+
 
 
         // Fitur Export Excel (Hanya untuk Kepala)
@@ -1411,6 +1805,7 @@
             const quickLookDashboard = document.getElementById('quick-look-dashboard');
             const rekapWidget = document.getElementById('pegawai-rekap-widget');
             const bulkHeader = document.getElementById('bulk-header');
+            const historyPeriodFilter = document.getElementById('history-period-filter');
             
             // Filter utama: HANYA tampilkan data yang belum diarsipkan (isArchived != true)
             const activeDataFull = izinData.filter(d => !d.isArchived);
@@ -1526,13 +1921,21 @@
                     document.getElementById('tab-aktif').className = "pb-3 px-2 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-colors";
                     document.getElementById('tab-riwayat').className = "pb-3 px-2 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors";
                     dataToShow = pendingData;
-                    
+
+                    if (historyPeriodFilter) historyPeriodFilter.classList.add('hidden');
                     bulkHeader.classList.add('hidden');
                     bulkHeader.classList.remove('flex');
                 } else {
                     document.getElementById('tab-aktif').className = "pb-3 px-2 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors";
                     document.getElementById('tab-riwayat').className = "pb-3 px-2 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-colors";
-                    dataToShow = historyData;
+
+                    if (historyPeriodFilter) historyPeriodFilter.classList.remove('hidden');
+                    populateHistoryPeriodOptions(historyData);
+                    if (selectedHistoryPeriod === 'all') {
+                        dataToShow = historyData;
+                    } else {
+                        dataToShow = historyData.filter(item => getPeriodInfo(getIzinReferenceDate(item)).key === selectedHistoryPeriod);
+                    }
 
                     bulkHeader.classList.remove('hidden');
                     bulkHeader.classList.add('flex');
@@ -1544,6 +1947,7 @@
                 quickLookDashboard.classList.remove('flex');
                 bulkHeader.classList.add('hidden');
                 bulkHeader.classList.remove('flex');
+                if (historyPeriodFilter) historyPeriodFilter.classList.add('hidden');
 
                 if(rekapWidget) {
                     rekapWidget.classList.remove('hidden');
@@ -1676,20 +2080,12 @@
             else if(isDisetujui) statusBadge = 'bg-emerald-100 text-emerald-700 border-emerald-200';
             else statusBadge = 'bg-rose-100 text-rose-700 border-rose-200';
 
-            // Filter Tanggal untuk Bulk Actions Checkbox (hanya menampilkan data periode tutup buku lalu)
-            const todayDate = new Date();
-            let currentPeriodStartForCheck;
-            if (todayDate.getDate() > 25) {
-                currentPeriodStartForCheck = new Date(todayDate.getFullYear(), todayDate.getMonth(), 26);
-            } else {
-                currentPeriodStartForCheck = new Date(todayDate.getFullYear(), todayDate.getMonth() - 1, 26);
-            }
-            const isPastPeriod = new Date(item.timestamp) < currentPeriodStartForCheck;
-            
             let rightSideHTML = `<span class="status-badge border ${statusBadge}">${item.status}</span>`;
             
-            // Checkbox untuk Hapus/Arsip (Hanya di tab Riwayat Kepala Pondok & Melewati Tgl 25)
-            if (currentUser.role === 'kepala' && activeKepalaTab === 'riwayat' && isPastPeriod) {
+            // Checkbox aksi Riwayat: tampil untuk SEMUA data yang sedang ditampilkan
+            // (mengikuti filter periode 26-25 yang dipilih). Ini mengembalikan fitur
+            // Pilih Semua + Arsipkan + Hapus tanpa membatasi hanya periode lama.
+            if (currentUser.role === 'kepala' && activeKepalaTab === 'riwayat') {
                 const isChecked = selectedItems.has(item.id) ? 'checked' : '';
                 rightSideHTML = `
                     <div class="flex items-center gap-3">
@@ -1766,15 +2162,33 @@
                 }
             }
 
+            // Lampiran Surat Dokter - ditampilkan khusus di menu Pimpinan.
+            // Mendukung format baru (Data URL di Firestore) dan URL Storage lama bila ada.
+            let suratDokterHTML = '';
+            if (currentUser.role === 'kepala' && item.kategori === 'C' && (item.suratDokterData || item.suratDokterUrl)) {
+                const namaLampiran = item.suratDokterNama || 'Surat Keterangan Dokter';
+                suratDokterHTML = `
+                    <div class="mt-3">
+                        <button type="button" onclick="openSuratDokter('${item.id}')" class="inline-flex items-center gap-2 text-[10px] font-bold text-indigo-700 bg-indigo-50 px-3 py-2 rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-200">
+                            <i class="fas fa-file-medical"></i> Lihat Surat Dokter
+                            <span class="font-medium text-indigo-500 max-w-[180px] truncate">${namaLampiran}</span>
+                        </button>
+                    </div>
+                `;
+            }
+
             // Admin Action Buttons
             let adminActions = '';
             if (currentUser.role === 'kepala' && isPending) {
                 adminActions = `
-                    <div class="mt-4 pt-4 border-t border-slate-100 flex gap-3">
-                        <button onclick="openModalAlasan('${item.id}', 'Ditolak')" class="flex-1 py-2 rounded-xl text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white transition-colors border border-rose-100">
+                    <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-3 gap-2">
+                        <button onclick="deletePendingIzin('${item.id}')" class="py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-50 hover:bg-slate-700 hover:text-white transition-colors border border-slate-200" title="Hapus pengajuan permanen">
+                            <i class="fas fa-trash-alt mr-1"></i> Hapus
+                        </button>
+                        <button onclick="openModalAlasan('${item.id}', 'Ditolak')" class="py-2 rounded-xl text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white transition-colors border border-rose-100">
                             Tolak
                         </button>
-                        <button onclick="openModalAlasan('${item.id}', 'Disetujui')" class="flex-1 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md">
+                        <button onclick="openModalAlasan('${item.id}', 'Disetujui')" class="py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md">
                             Setujui
                         </button>
                     </div>
@@ -1810,7 +2224,8 @@
                                 <i class="fas fa-exclamation-circle"></i> ${item.catatanSOP}
                             </div>
                         ` : ''}
-                        
+
+                        ${suratDokterHTML}
                         ${alasanHTML}
                         ${durationBadge}
                     </div>
