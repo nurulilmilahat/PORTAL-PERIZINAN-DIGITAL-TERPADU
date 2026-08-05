@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PELITA - Ponpes Nurul Ilmi</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Cdefs%3E%3ClinearGradient id=%27b%27 x1=%270%25%27 y1=%270%25%27 x2=%27100%25%27 y2=%27100%25%27%3E%3Cstop offset=%270%25%27 stop-color=%27%231e40af%27/%3E%3Cstop offset=%27100%25%27 stop-color=%27%233b82f6%27/%3E%3C/linearGradient%3E%3ClinearGradient id=%27l%27 x1=%270%25%27 y1=%270%25%27 x2=%27100%25%27 y2=%27100%25%27%3E%3Cstop offset=%270%25%27 stop-color=%27%23fef08a%27/%3E%3Cstop offset=%2750%25%27 stop-color=%27%23fbbf24%27/%3E%3Cstop offset=%27100%25%27 stop-color=%27%23d97706%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27white%27/%3E%3Cpath d=%27M50 8C50 30 40 38 18 38C40 38 50 46 50 68C50 46 60 38 82 38C60 38 50 30 50 8Z%27 fill=%27url(%23l)%27/%3E%3Ccircle cx=%2750%27 cy=%2738%27 r=%272.5%27 fill=%27white%27/%3E%3Cpath d=%27M15 62Q32.5 48 50 68Q67.5 48 85 62V82Q67.5 68 50 88Q32.5 68 15 82Z%27 fill=%27url(%23b)%27/%3E%3Cpath d=%27M50 68V88%27 stroke=%27white%27 stroke-width=%272.5%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -470,7 +471,7 @@
                 </div>
 
                 <!-- RIGHT COLUMN: History/List -->
-                <div class="lg:col-span-7">
+                <div id="main-content-section" class="lg:col-span-7">
                     <div class="glass p-6 md:p-8 rounded-[2.5rem] shadow-xl border border-white min-h-[600px] relative">
                         <div class="flex justify-between items-center mb-6">
                             <h3 id="list-title" class="text-xl font-extrabold text-blue-950">Data Pengajuan</h3>
@@ -865,6 +866,7 @@
             let q;
             if (currentUser.role === 'pegawai') {
                 document.getElementById('form-section').classList.remove('hidden');
+                document.getElementById('main-content-section').style.gridColumn = '';
                 document.getElementById('admin-widget').classList.add('hidden');
                 document.getElementById('list-title').textContent = 'Riwayat Pengajuan Saya';
                 document.getElementById('btn-export-excel').classList.add('hidden');
@@ -873,6 +875,7 @@
                 q = query(getColRef(), where("userUid", "==", currentUser.uid));
             } else {
                 document.getElementById('form-section').classList.add('hidden');
+                document.getElementById('main-content-section').style.gridColumn = '1 / -1';
                 document.getElementById('admin-widget').classList.remove('hidden');
                 document.getElementById('list-title').textContent = 'Manajemen Perizinan';
                 document.getElementById('btn-export-excel').classList.remove('hidden');
@@ -1124,43 +1127,87 @@
             throw new Error('LAMPIRAN_Foto masih terlalu besar setelah dikompres. Silakan foto ulang dengan resolusi lebih rendah.');
         }
 
-        // Buka lampiran Firestore pada tab baru tanpa Firebase Storage.
-        // Tetap mendukung surat lama yang mungkin sudah memiliki suratDokterUrl.
-        function openSuratDokter(izinId) {
-            const item = izinData.find(d => d.id === izinId);
-            if (!item) return notify('Data izin tidak ditemukan.', 'error');
+        // Buka lampiran surat dokter langsung dari dokumen Firestore terbaru.
+        // Data dibaca ulang saat tombol diklik agar Pimpinan tidak bergantung pada cache/listener.
+        function showSuratDokterViewer(src, namaLampiran = 'Surat Keterangan Dokter') {
+            const oldViewer = document.getElementById('surat-dokter-viewer');
+            if (oldViewer) oldViewer.remove();
 
-            if (item.suratDokterData) {
-                try {
-                    const parts = item.suratDokterData.split(',');
-                    const mimeMatch = (parts[0] || '').match(/data:([^;]+);base64/);
-                    const mime = mimeMatch ? mimeMatch[1] : (item.suratDokterMime || 'image/jpeg');
-                    const binary = atob(parts[1] || '');
-                    const bytes = new Uint8Array(binary.length);
-                    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-                    const blob = new Blob([bytes], { type: mime });
-                    const url = URL.createObjectURL(blob);
-                    const opened = window.open(url, '_blank', 'noopener,noreferrer');
-                    if (!opened) {
-                        URL.revokeObjectURL(url);
-                        notify('Browser memblokir tab lampiran. Izinkan pop-up untuk membuka surat dokter.', 'error');
-                        return;
-                    }
-                    setTimeout(() => URL.revokeObjectURL(url), 60000);
-                    return;
-                } catch (error) {
-                    console.error('Gagal membuka lampiran Firestore:', error);
-                    notify('Lampiran surat dokter tidak dapat dibuka.', 'error');
+            const viewer = document.createElement('div');
+            viewer.id = 'surat-dokter-viewer';
+            viewer.className = 'fixed inset-0 z-[200] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4';
+            viewer.innerHTML = `
+                <div class="relative w-full max-w-4xl max-h-[94vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+                    <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 bg-white">
+                        <div class="min-w-0">
+                            <div class="text-sm font-extrabold text-slate-800">Surat Keterangan Dokter</div>
+                            <div class="text-[10px] text-slate-500 truncate">${namaLampiran || 'Lampiran'}</div>
+                        </div>
+                        <button type="button" id="btn-close-surat-dokter" class="w-10 h-10 shrink-0 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center" aria-label="Tutup">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-auto bg-slate-100 p-3 flex items-center justify-center min-h-0">
+                        <img src="${src}" alt="Surat Keterangan Dokter" class="max-w-full h-auto object-contain rounded-xl shadow-sm bg-white">
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(viewer);
+
+            const closeViewer = () => viewer.remove();
+            document.getElementById('btn-close-surat-dokter').addEventListener('click', closeViewer);
+            viewer.addEventListener('click', (e) => {
+                if (e.target === viewer) closeViewer();
+            });
+        }
+
+        async function openSuratDokter(izinId) {
+            try {
+                // Ambil ulang dokumen langsung dari Firestore supaya field lampiran terbaru pasti terbaca.
+                const snap = await getDoc(doc(db, 'perizinan', izinId));
+                if (!snap.exists()) {
+                    notify('Data izin tidak ditemukan.', 'error');
                     return;
                 }
-            }
 
-            if (item.suratDokterUrl) {
-                window.open(item.suratDokterUrl, '_blank', 'noopener,noreferrer');
-                return;
-            }
+                const item = { id: snap.id, ...snap.data() };
+                const namaLampiran = item.suratDokterNama || 'Surat Keterangan Dokter';
 
-            notify('Lampiran surat dokter tidak tersedia.', 'error');
+                // Format utama versi PELITA tanpa Firebase Storage: Data URL/Base64 di Firestore.
+                let dataLampiran = item.suratDokterData || item.suratDokterBase64 || item.lampiranSuratDokter || item.lampiranData || null;
+
+                if (typeof dataLampiran === 'string' && dataLampiran.trim()) {
+                    let src = dataLampiran.trim();
+                    // Dukungan apabila yang tersimpan hanya isi Base64 tanpa awalan data:image/...
+                    if (!src.startsWith('data:') && !/^https?:\/\//i.test(src)) {
+                        const mime = item.suratDokterMime || 'image/jpeg';
+                        src = `data:${mime};base64,${src}`;
+                    }
+                    showSuratDokterViewer(src, namaLampiran);
+                    return;
+                }
+
+                // Dukungan kompatibilitas untuk Bytes Firestore bila pernah dipakai pada versi lain.
+                if (dataLampiran && typeof dataLampiran.toUint8Array === 'function') {
+                    const bytes = dataLampiran.toUint8Array();
+                    const blob = new Blob([bytes], { type: item.suratDokterMime || 'image/jpeg' });
+                    const url = URL.createObjectURL(blob);
+                    showSuratDokterViewer(url, namaLampiran);
+                    setTimeout(() => URL.revokeObjectURL(url), 5 * 60 * 1000);
+                    return;
+                }
+
+                // Dukungan data lama yang pernah memakai URL Storage.
+                if (item.suratDokterUrl) {
+                    showSuratDokterViewer(item.suratDokterUrl, namaLampiran);
+                    return;
+                }
+
+                notify('File surat dokter tidak tersimpan pada pengajuan ini. Keterangan lampiran ada, tetapi file aslinya tidak tersedia.', 'error');
+            } catch (error) {
+                console.error('Gagal membuka lampiran surat dokter:', error);
+                notify('Lampiran surat dokter tidak dapat dibuka.', 'error');
+            }
         }
         window.openSuratDokter = openSuratDokter;
 
@@ -1740,7 +1787,7 @@
             const filteredData = izinData.filter(d => {
                 const docDate = new Date(d.timestamp);
                 return docDate >= startDate && docDate <= endDate;
-            });
+            }).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
             if (filteredData.length === 0) {
                 notify("Tidak ada data pengajuan pada periode ini", "error");
@@ -2165,7 +2212,8 @@
             // Lampiran Surat Dokter - ditampilkan khusus di menu Pimpinan.
             // Mendukung format baru (Data URL di Firestore) dan URL Storage lama bila ada.
             let suratDokterHTML = '';
-            if (currentUser.role === 'kepala' && item.kategori === 'C' && (item.suratDokterData || item.suratDokterUrl)) {
+            const tercatatMelampirkanSurat = typeof item.catatanSOP === 'string' && item.catatanSOP.toLowerCase().includes('melampirkan surat keterangan dokter');
+            if (currentUser.role === 'kepala' && item.kategori === 'C' && (item.suratDokterData || item.suratDokterUrl || item.suratDokterBase64 || item.lampiranSuratDokter || item.lampiranData || tercatatMelampirkanSurat)) {
                 const namaLampiran = item.suratDokterNama || 'Surat Keterangan Dokter';
                 suratDokterHTML = `
                     <div class="mt-3">
